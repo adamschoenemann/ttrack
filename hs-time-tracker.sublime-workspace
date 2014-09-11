@@ -1,0 +1,1970 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"scrip",
+				"script	Tag"
+			],
+			[
+				"count",
+				"count"
+			],
+			[
+				"no",
+				"none"
+			],
+			[
+				"video",
+				"videoer"
+			],
+			[
+				"esle",
+				"elseif	elseif …"
+			],
+			[
+				"vid",
+				"videoer"
+			],
+			[
+				"episo",
+				"episodeList"
+			],
+			[
+				"getPodcast",
+				"getPodcastEpisodes"
+			],
+			[
+				"PodD",
+				"PodDB"
+			],
+			[
+				"update",
+				"updatePodcastFromFeed"
+			],
+			[
+				"Cont",
+				"Content"
+			],
+			[
+				"contentTo",
+				"contentToStringDefault"
+			],
+			[
+				"enclosure",
+				"encloseureurl"
+			],
+			[
+				"strip",
+				"stripUnicodeBOM"
+			],
+			[
+				"stri",
+				"stripUnicodeBOM"
+			],
+			[
+				"conv",
+				"convPodcastRow"
+			],
+			[
+				"getP",
+				"getPodcast"
+			],
+			[
+				"q",
+				"quickQuery"
+			],
+			[
+				"toSQ",
+				"toSql"
+			],
+			[
+				"error",
+				"errorHandler"
+			],
+			[
+				"sql",
+				"sqlDesc"
+			],
+			[
+				"pnm",
+				"pnmTest3"
+			],
+			[
+				"Eval",
+				"Eval6"
+			],
+			[
+				"runE",
+				"runEval6"
+			],
+			[
+				"Wri",
+				"WriterT"
+			],
+			[
+				"runeS",
+				"runStateT"
+			],
+			[
+				"Wr",
+				"WriterT"
+			],
+			[
+				"eval",
+				"eval4"
+			],
+			[
+				"Va",
+				"Variable"
+			],
+			[
+				"Ev",
+				"Eval4"
+			],
+			[
+				"Erro",
+				"ErrorT"
+			],
+			[
+				"Reader",
+				"ReaderT"
+			],
+			[
+				"Var",
+				"Variable"
+			],
+			[
+				"Err",
+				"ErrorT"
+			],
+			[
+				"Inv",
+				"IntVal"
+			],
+			[
+				"Int",
+				"IntVal"
+			],
+			[
+				"pn",
+				"pnmTest3"
+			],
+			[
+				"St",
+				"State"
+			],
+			[
+				"pnmT",
+				"pnmTest2"
+			],
+			[
+				"Maybe",
+				"MaybeT"
+			],
+			[
+				"pop",
+				"popFront"
+			],
+			[
+				"S",
+				"State"
+			],
+			[
+				"getS",
+				"getSt"
+			],
+			[
+				"putS",
+				"putSt"
+			],
+			[
+				"put",
+				"putState"
+			],
+			[
+				"test",
+				"test2"
+			],
+			[
+				"land",
+				"landLeft"
+			],
+			[
+				"lan",
+				"landLeft"
+			],
+			[
+				"Sta",
+				"State"
+			],
+			[
+				"App",
+				"AppState"
+			],
+			[
+				"Read",
+				"ReaderT"
+			],
+			[
+				"APP",
+				"AppState"
+			],
+			[
+				"State",
+				"StateT"
+			],
+			[
+				"Re",
+				"ReaderT"
+			],
+			[
+				"cfg",
+				"cfgMaxDepth"
+			],
+			[
+				"list",
+				"listDirectory"
+			],
+			[
+				"con",
+				"constrainedCount"
+			],
+			[
+				"Ap",
+				"AppState"
+			],
+			[
+				"int",
+				"Int"
+			],
+			[
+				"new",
+				"newName"
+			],
+			[
+				"drop",
+				"dropWhile"
+			],
+			[
+				"pa",
+				"parseP5"
+			],
+			[
+				"get",
+				"getBytes"
+			],
+			[
+				"Random",
+				"RandomState"
+			],
+			[
+				"in",
+				"instance	Instance"
+			],
+			[
+				"Rando",
+				"RandomState"
+			],
+			[
+				"ret",
+				"returnState"
+			],
+			[
+				"runS",
+				"runState"
+			],
+			[
+				"return",
+				"returnSt"
+			],
+			[
+				"Not",
+				"Nothing"
+			],
+			[
+				"un",
+				"unwrapS"
+			],
+			[
+				"one",
+				"oneBusinessPhone"
+			],
+			[
+				"al",
+				"allBusinessPhones"
+			],
+			[
+				"look",
+				"lookup"
+			],
+			[
+				"pars",
+				"parseInput"
+			],
+			[
+				"di",
+				"digitToInt"
+			],
+			[
+				"par",
+				"parse"
+			],
+			[
+				"parse",
+				"parseCoord"
+			],
+			[
+				"col",
+				"colToIndex"
+			],
+			[
+				"show",
+				"showSquares"
+			],
+			[
+				"showB",
+				"showBoardRows"
+			],
+			[
+				"Exc",
+				"InvalidArgumentException()	SPL Exception"
+			],
+			[
+				"setLoca",
+				"setlocale()	standard Function"
+			],
+			[
+				"strf",
+				"strftime()	date Function"
+			],
+			[
+				"html_",
+				"html_entity_decode()	standard Function"
+			],
+			[
+				"mysql_q",
+				"mysql_query"
+			],
+			[
+				"tex",
+				"texts"
+			],
+			[
+				"mysql_fe",
+				"mysql_fetch_array"
+			],
+			[
+				"mysql_qu",
+				"mysql_query()	mysql Function"
+			],
+			[
+				"SQ",
+				"SQLRun"
+			],
+			[
+				"sub",
+				"subdirectory"
+			],
+			[
+				"tool",
+				"toolbar"
+			],
+			[
+				"mysql_set",
+				"mysql_set_charset()	mysql Function"
+			],
+			[
+				"glob",
+				"global"
+			],
+			[
+				"Create",
+				"CreateImageList"
+			],
+			[
+				"json_",
+				"json_encode($files"
+			],
+			[
+				"resu",
+				"result"
+			],
+			[
+				"res",
+				"result"
+			],
+			[
+				"mysql_re",
+				"mysql_real_escape_string"
+			],
+			[
+				"mysql_",
+				"mysql_error"
+			],
+			[
+				"result",
+				"result_array"
+			],
+			[
+				"_",
+				"_REQUEST"
+			],
+			[
+				"inc",
+				"incl1	include_once …"
+			],
+			[
+				"REQ",
+				"REQUEST_URI"
+			],
+			[
+				"RE",
+				"REQUEST_URI"
+			],
+			[
+				"str_re",
+				"str_replace"
+			],
+			[
+				"nw",
+				"newrow"
+			],
+			[
+				"showSua",
+				"showSquares"
+			],
+			[
+				"Beat",
+				"BeatPlanner"
+			],
+			[
+				"Exp",
+				"Expenses:Moms"
+			],
+			[
+				"file",
+				"filename"
+			],
+			[
+				"Be",
+				"BestPest"
+			],
+			[
+				"Bes",
+				"BestPestCommandLine"
+			],
+			[
+				"BestP",
+				"BestPestCommandLine"
+			],
+			[
+				"Con",
+				"Console"
+			],
+			[
+				"val",
+				"valString"
+			],
+			[
+				"value",
+				"Value"
+			],
+			[
+				"th",
+				"threshold"
+			],
+			[
+				"Calc",
+				"CalculateNextIndex"
+			],
+			[
+				"Best",
+				"BestPest"
+			],
+			[
+				"st",
+				"static"
+			],
+			[
+				"KEy_RI",
+				"KEY_RIGHTCTRL"
+			],
+			[
+				"KEY_LEF",
+				"KEY_LEFTCTRL"
+			],
+			[
+				"KEY_RI",
+				"KEY_RIGHTSHIFT"
+			],
+			[
+				"ky",
+				"keys"
+			],
+			[
+				"KEY_L",
+				"KEY_L"
+			],
+			[
+				"KEY_RIGH",
+				"KEY_RIGHTSHIFT"
+			],
+			[
+				"KEY_SHI",
+				"KEY_LEFTSHIFT"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "test.hs",
+			"settings":
+			{
+				"buffer_size": 48,
+				"line_ending": "Windows"
+			}
+		}
+	],
+	"build_system": "",
+	"command_palette":
+	{
+		"height": 400.0,
+		"selected_items":
+		[
+			[
+				"fav",
+				"Favorite Files: Open File(s)"
+			],
+			[
+				"migra",
+				"LaTeXTools: Reconfigure and migrate settings"
+			],
+			[
+				"browse",
+				"Preferences: Browse Packages"
+			],
+			[
+				"inst",
+				"Package Control: Install Package"
+			],
+			[
+				"instl",
+				"Package Control: Install Package"
+			],
+			[
+				"favo",
+				"Favorite Files: Open File(s)"
+			],
+			[
+				"open",
+				"Favorite Files: Open File(s)"
+			],
+			[
+				"",
+				"Bookmarks: Select Next"
+			],
+			[
+				"new",
+				"File: New File Relative to Current View"
+			],
+			[
+				"spac",
+				"Indentation: Convert to Spaces"
+			],
+			[
+				"conv",
+				"Indentation: Convert to Spaces"
+			],
+			[
+				"remo",
+				"Package Control: Remove Package"
+			],
+			[
+				"remove",
+				"Package Control: Remove Package"
+			],
+			[
+				"ren",
+				"File: Rename"
+			],
+			[
+				"mark",
+				"Set Syntax: Markdown"
+			],
+			[
+				"rei",
+				"Indentation: Reindent Lines"
+			],
+			[
+				"space",
+				"Indentation: Convert to Spaces"
+			],
+			[
+				"conver",
+				"Indentation: Convert to Spaces"
+			],
+			[
+				"wrap",
+				"Word Wrap: Toggle"
+			],
+			[
+				"sql",
+				"Set Syntax: SQL"
+			],
+			[
+				"ins",
+				"Package Control: Install Package"
+			],
+			[
+				"wrao",
+				"Word Wrap: Toggle"
+			],
+			[
+				"clos",
+				"File: Close All"
+			],
+			[
+				"rea",
+				"FTPSync: Open README (Github)"
+			],
+			[
+				"java",
+				"Set Syntax: JavaScript"
+			],
+			[
+				"json",
+				"Set Syntax: JSON"
+			],
+			[
+				"late",
+				"Set Syntax: LaTeX"
+			],
+			[
+				"ali",
+				"Align cursor"
+			],
+			[
+				"align",
+				"Align cursor"
+			],
+			[
+				"led",
+				"Set Syntax: Ledger"
+			],
+			[
+				"ledg",
+				"Set Syntax: Ledger"
+			],
+			[
+				"swap",
+				"BracketHighlighter: Swap Brackets"
+			],
+			[
+				"bra",
+				"BracketHighlighter: Swap Brackets"
+			],
+			[
+				"make",
+				"Set Syntax: Makefile"
+			],
+			[
+				"brow",
+				"File: Open In Browser - Testing Server"
+			],
+			[
+				"key",
+				"Preferences: Key Bindings - Default"
+			],
+			[
+				"run",
+				"AutoHotkey - Run"
+			],
+			[
+				"autoho",
+				"Set Syntax: AutoHotkey"
+			],
+			[
+				"packa",
+				"Package Control: Discover Packages"
+			],
+			[
+				"previ",
+				"Markdown Preview: Python Markdown: Preview in Browser"
+			],
+			[
+				"markd",
+				"Markdown Preview: Open Markdown Cheat sheet"
+			],
+			[
+				"preview",
+				"Markdown Preview: Python Markdown: Preview in Browser"
+			],
+			[
+				"defau",
+				"Preferences: Settings - Default"
+			],
+			[
+				"user",
+				"Preferences: Settings - User"
+			],
+			[
+				"chea",
+				"Markdown Preview: Open Markdown Cheat sheet"
+			],
+			[
+				"dele",
+				"File: Delete"
+			],
+			[
+				"brows",
+				"Preferences: Browse Packages"
+			],
+			[
+				"inser",
+				"Insert File Directory"
+			],
+			[
+				"file",
+				"File: Copy Path as URI"
+			],
+			[
+				"pack",
+				"Package Control: List Packages"
+			],
+			[
+				"c#",
+				"Set Syntax: C#"
+			],
+			[
+				"lis",
+				"Package Control: List Packages"
+			],
+			[
+				"renam",
+				"File: Rename"
+			],
+			[
+				"rena",
+				"File: Rename"
+			],
+			[
+				"new ",
+				"File: New File Relative to Current View"
+			],
+			[
+				"projec",
+				"Project: Edit"
+			],
+			[
+				"remov",
+				"Package Control: Remove Package"
+			],
+			[
+				"shad",
+				"Set Syntax: Unity Shader"
+			],
+			[
+				"hlsl",
+				"Set Syntax: High Level SL"
+			],
+			[
+				"glsl",
+				"Set Syntax: OpenGL SL"
+			],
+			[
+				"cg",
+				"Set Syntax: Cg"
+			],
+			[
+				"list",
+				"Package Control: List Packages"
+			],
+			[
+				"lint",
+				"SublimeLinter: Lint This View"
+			],
+			[
+				"move",
+				"File: Move"
+			],
+			[
+				"wra",
+				"Word Wrap: Toggle"
+			],
+			[
+				"latex",
+				"Set Syntax: LaTeX"
+			],
+			[
+				"highv",
+				"BracketHighlighter: Toggle High Visibility Mode"
+			],
+			[
+				"high v",
+				"BracketHighlighter: Toggle High Visibility Mode"
+			],
+			[
+				"brack",
+				"BracketHighlighter: Swap Brackets"
+			],
+			[
+				"alig",
+				"Align cursor"
+			],
+			[
+				"def",
+				"Preferences: Key Bindings - Default"
+			],
+			[
+				"conve",
+				"Indentation: Convert to Spaces"
+			],
+			[
+				"comment",
+				"Toggle Block Comment"
+			],
+			[
+				"ke",
+				"Preferences: Key Bindings - User"
+			],
+			[
+				"bib",
+				"Set Syntax: BibTeX"
+			],
+			[
+				"re",
+				"Indentation: Reindent Lines"
+			],
+			[
+				"syntax ba",
+				"Set Syntax: Batch File"
+			],
+			[
+				"shader",
+				"Set Syntax: Unity Shader"
+			],
+			[
+				"cop",
+				"File: Copy Name"
+			],
+			[
+				"instal",
+				"Package Control: Install Package"
+			],
+			[
+				"prev",
+				"Markdown Preview: Python Markdown: Preview in Browser"
+			],
+			[
+				"cta",
+				"CTags: Rebuild Tags"
+			],
+			[
+				"bro",
+				"Browse Mode: Current file or project"
+			],
+			[
+				"add",
+				"Favorite Files: Add File(s)"
+			],
+			[
+				"rece",
+				"File History: Current Project: Open recently closed file"
+			],
+			[
+				"cheat",
+				"Markdown Preview: Open Markdown Cheat sheet"
+			],
+			[
+				"keys",
+				"Preferences: Key Bindings - User"
+			],
+			[
+				"markdo",
+				"Markdown Preview: Open Markdown Cheat sheet"
+			],
+			[
+				"previe",
+				"Markdown Preview: Python Markdown: Preview in Browser"
+			],
+			[
+				"unit",
+				"Set Syntax: Unity Shader"
+			],
+			[
+				"syntax c",
+				"Set Syntax: C"
+			],
+			[
+				"new fi",
+				"File: New File Relative to Current View"
+			],
+			[
+				"mar",
+				"Markdown Preview: Open Markdown Cheat sheet"
+			],
+			[
+				"sublimeclan",
+				"Preferences: SublimeClang Settings – User"
+			],
+			[
+				"rename",
+				"File: Rename"
+			],
+			[
+				"githu",
+				"Markdown Preview: Github Flavored Markdown: Preview in Browser"
+			],
+			[
+				"ind",
+				"Indentation: Convert to Tabs"
+			],
+			[
+				"refe",
+				"Unity Reference: Search Selection"
+			],
+			[
+				"sideb",
+				"View: Toggle Open Files in Side Bar"
+			],
+			[
+				"im",
+				"Java: Import Class Under Cursor"
+			],
+			[
+				"imp",
+				"Java: Import Class Under Cursor"
+			],
+			[
+				"new f",
+				"File: New File Relative to Current View"
+			],
+			[
+				"copy",
+				"File: Copy Path"
+			],
+			[
+				"disal",
+				"Package Control: Disable Package"
+			],
+			[
+				"impor",
+				"Snippet: import junit.framework.TestCase;"
+			],
+			[
+				"Package Control: ",
+				"Package Control: List Packages"
+			],
+			[
+				"impo",
+				"Java: Import Class Under Cursor"
+			],
+			[
+				"Java",
+				"Set Syntax: Java"
+			],
+			[
+				"file: n",
+				"File: New File Relative to Current View"
+			],
+			[
+				"Projec",
+				"Project: Edit"
+			],
+			[
+				"in",
+				"Indent XML"
+			],
+			[
+				"inde",
+				"Indent XML"
+			],
+			[
+				"install",
+				"Package Control: Install Package"
+			],
+			[
+				"sideba",
+				"View: Toggle Open Files in Side Bar"
+			],
+			[
+				"insta",
+				"Package Control: Install Package"
+			],
+			[
+				"xml",
+				"Indent XML"
+			],
+			[
+				"tidy",
+				"TidyHTML"
+			],
+			[
+				"XML",
+				"Indent XML"
+			],
+			[
+				"jso",
+				"Pretty JSON: Reformat (Pretty Print) JSON"
+			],
+			[
+				"ASt",
+				"SublimeAStyleFormatter: Format Current File"
+			],
+			[
+				"forma",
+				"SublimeAStyleFormatter: Format Current File"
+			],
+			[
+				"prett",
+				"Pretty JSON: Reformat (Pretty Print) JSON"
+			],
+			[
+				"Insta",
+				"Package Control: Install Package"
+			],
+			[
+				"copy ",
+				"File: Copy Path"
+			],
+			[
+				"php",
+				"Set Syntax: PHP"
+			],
+			[
+				"SublimeL",
+				"SublimeLinter: Extract Annotations"
+			],
+			[
+				"subli",
+				"SublimeLinter: Extract Annotations"
+			],
+			[
+				"main",
+				"Snippet: main()"
+			]
+		],
+		"width": 544.0
+	},
+	"console":
+	{
+		"height": 125.0,
+		"history":
+		[
+			"sublime.file",
+			"sublime.current",
+			"sublime.set_clipboard(\"hey\")",
+			"sublime.view",
+			"sublime",
+			"self.view",
+			"self",
+			"import urllib.request,os,hashlib; h = '7183a2d3e96f11eeadd761d777e62404' + 'e330c659d4bb41d3bdf022e94cab3cd0'; pf = 'Package Control.sublime-package'; ipp = sublime.installed_packages_path(); urllib.request.install_opener( urllib.request.build_opener( urllib.request.ProxyHandler()) ); by = urllib.request.urlopen( 'http://sublime.wbond.net/' + pf.replace(' ', '%20')).read(); dh = hashlib.sha256(by).hexdigest(); print('Error validating download (got %s instead of %s), please try manual install' % (dh, h)) if dh != h else open(os.path.join( ipp, pf), 'wb' ).write(by)"
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"expanded_folders":
+	[
+		"/F/Dropbox/Projects/Haskell/hs-time-tracker"
+	],
+	"file_history":
+	[
+		"/F/Dropbox/Projects/Haskell/real-world-haskell/c22/pod.cabal",
+		"/F/Dropbox/Programs/bin/setup-env.ps1",
+		"/F/Dropbox/Users/Adam/AppData/Roaming/cabal/config",
+		"/F/Dropbox/Programs/SublimeText/Data/Packages/LaTeXTools/README.markdown",
+		"/F/Dropbox/Programs/bin/setup-programs.ps1",
+		"/F/Dropbox/Docs/taarnet-faktura/2014-09-09_faktura.tex",
+		"/F/Dropbox/Programs/miktex/tex/latex/invoice/invoice.def",
+		"/C/Users/Adam/AppData/Local/Temp/fz3temp-1/index.php",
+		"/F/Dropbox/Projects/Haskell/real-world-haskell/c22/test.hs",
+		"/C/Users/Adam/AppData/Roaming/cabal/config",
+		"/F/Dropbox/Programs/SumatraPDF/SumatraPDF-settings.txt",
+		"/C/Users/Adam/AppData/Local/Temp/fz3temp-1/.htaccess",
+		"/C/Users/Adam/AppData/Local/Temp/fz3temp-1/style.css",
+		"/C/Users/Adam/AppData/Local/Temp/fz3temp-1/functions.php",
+		"/F/Dropbox/Programs/cabal/config",
+		"/F/Dropbox/Projects/Haskell/real-world-haskell/c22/build.bat",
+		"/F/Dropbox/Projects/Haskell/real-world-haskell/c22/feed.xml",
+		"/F/Dropbox/Projects/Haskell/real-world-haskell/c22/Setup.hs",
+		"/F/Dropbox/Projects/Haskell/real-world-haskell/c10/PNM.hs",
+		"/F/Dropbox/Projects/Haskell/real-world-haskell/c21/query.hs",
+		"/C/Users/Adam/AppData/Local/Temp/Rar$DR00.363/article_1.tex",
+		"/F/Dropbox/BTP/Docs/tekster-til-Martin.tex",
+		"/F/Dropbox/BTP/Docs/Tekster-til-Martin.md",
+		"/F/Dropbox/BTP/Docs/tekster-til-martin.tex",
+		"/C/Users/Adam/Documents/WindowsPowerShell/Microsoft.PowerShell_profile.ps1",
+		"/C/Users/Adam/Desktop/image.txt",
+		"/C/Users/Adam/Desktop/New Text Document.txt",
+		"/F/Dropbox/Projects/Haskell/stack/Stack.hs",
+		"/F/Dropbox/Scripts/test_keys.ahk",
+		"/F/Dropbox/Projects/Haskell/learn/monads/rwh.c14.SimpleState.hs",
+		"/F/Dropbox/Projects/Haskell/learn/monads/rwh.c15.Supply.hs",
+		"/F/Dropbox/Projects/Haskell/learn/monads/rwh.c15.VCard.hs",
+		"/F/Dropbox/Projects/Haskell/learn/monads/rwh.c15.hs",
+		"/F/Dropbox/Projects/Haskell/learn/monads/rwh.c14.Random.hs",
+		"/F/Dropbox/xampp/htdocs/taarn-net/inc/func_userlogin.php",
+		"/F/Dropbox/xampp/htdocs/taarn-net/inc/var_constants.php",
+		"/F/Dropbox/xampp/htdocs/taarn-net/sideadmin.php",
+		"/F/Dropbox/xampp/htdocs/taarn-net/index.php",
+		"/F/Dropbox/xampp/htdocs/taarn-net/NOTES.md",
+		"/F/Dropbox/xampp/htdocs/taarn-net/inc/func_general.php",
+		"/F/Dropbox/xampp/htdocs/taarn-net/inc/image_list.js",
+		"/F/Dropbox/xampp/htdocs/taarn-net/inc/func_duty.php",
+		"/F/Projects/Vagrant/testbox/kbd-mangler-2.1/bin/kbd-mangler",
+		"/F/Dropbox/xampp/htdocs/taarn-net/inc/formdata.php",
+		"/F/Dropbox/xampp/htdocs/taarn-net/.gitignore",
+		"/F/Projects/Vagrant/testbox/kbd-mangler-2.1/.gitignore",
+		"/F/Dropbox/xampp/htdocs/taarn-net/inc/calendar.js",
+		"/F/Projects/Vagrant/testbox/kbd-mangler-2.1/docs/index.html",
+		"/F/Dropbox/xampp/htdocs/taarn-net/vagtplan.php",
+		"/F/Dropbox/Cille/OOSE/LoginSystem/LoginSystem/users.csv",
+		"/C/Users/Adam/AppData/Local/Temp/fz3temp-1/var_constants.php",
+		"/C/Users/Adam/AppData/Local/Temp/fz3temp-1/sideadmin.php",
+		"/C/Users/Adam/AppData/Local/Temp/fz3temp-1/formdata.php",
+		"/C/Users/Adam/AppData/Local/Temp/fz3temp-1/func_general.php",
+		"/F/Dropbox/xampp/htdocs/taarn-net/imagelist.php",
+		"/C/Users/Adam/AppData/Local/Temp/fz3temp-1/image_list.js",
+		"/F/Projects/Vagrant/testbox/kbd-mangler-2.1/scripting.c",
+		"/C/Windows/System32/drivers/etc/hosts",
+		"/C/Users/Adam/AppData/Local/Microsoft/Windows/Temporary Internet Files/Content.IE5/ENAZQEMS/imagelist.json",
+		"/F/Dropbox/xampp/htdocs/taarn-net/billeder.php",
+		"/F/Dropbox/xampp/htdocs/taarn-net/sideadmin/index.php",
+		"/F/Dropbox/xampp/htdocs/taarn-net/config.ini",
+		"/F/Dropbox/xampp/htdocs/taarn-net/.htaccess",
+		"/F/Dropbox/xampp/htdocs/taarn-net/inc/config.php",
+		"/C/Users/Adam/AppData/Local/Temp/fz3temp-1/phpinfo.php",
+		"/F/Dropbox/xampp/htdocs/index.php",
+		"/F/Dropbox/xampp/htdocs/taarn-net/phpinfo.php",
+		"/F/Dropbox/xampp/htdocs/taarn-net/log/index.php",
+		"/C/Users/Adam/AppData/Local/Temp/fz3temp-1/tiny_mce_src.js",
+		"/C/Users/Adam/AppData/Local/Temp/fz3temp-1/index 5.php",
+		"/C/Users/Adam/AppData/Local/Temp/fz3temp-1/index 4.php",
+		"/C/Users/Adam/AppData/Local/Temp/fz3temp-1/index 3.php",
+		"/C/Users/Adam/AppData/Local/Temp/fz3temp-1/index 2.php",
+		"/C/Users/Adam/AppData/Local/Temp/fz3temp-1/license.txt",
+		"/F/Projects/beat-planner/java/dk/aschoen/beatplanner/Beat.java",
+		"/F/Projects/beat-planner/java/dk/aschoen/beatplanner/BeatEventArgs.java",
+		"/F/Projects/beat-planner/notes.md",
+		"/F/Projects/beat-planner/BeatPlannerAndroid/src/beatplanner/ui/SequenceView.cs",
+		"/F/Projects/beat-planner/BeatPlannerAndroid/src/beatplanner/ui/MeterSpinner.cs",
+		"/F/Dropbox/libs/android/drag-sort-listview/pom.xml",
+		"/F/Dropbox/libs/android/drag-sort-listview/demo/src/com/mobeta/android/demodslv/Launcher.java",
+		"/F/Dropbox/libs/android/drag-sort-listview/demo/src/com/mobeta/android/demodslv/DSLVFragmentClicks.java",
+		"/F/Dropbox/Projects/Haskell/math/Geometry.hs",
+		"/F/Dropbox/Projects/Haskell/math/Vector3.hs",
+		"/F/Dropbox/Projects/Haskell/learn/learnio.hs",
+		"/F/Dropbox/Projects/Haskell/learn/coins.hs",
+		"/F/Dropbox/Projects/Haskell/learn/walk_the_line.hs",
+		"/F/Dropbox/Projects/Haskell/chess/chess.hs",
+		"/F/Dropbox/Programs/bin/setup.cmd",
+		"/F/Projects/beat-planner/.gitignore",
+		"/F/Projects/beat-planner/BeatPlannerGtk/.gitignore",
+		"/F/Dropbox/libs/android/drag-sort-listview/library/bin/R.txt",
+		"/F/Dropbox/libs/android/drag-sort-listview/demo/res/layout/launcher.xml",
+		"/F/Projects/beat-planner/BeatPlannerAndroid/Resources/layout/Metro.axml",
+		"/F/Projects/beat-planner/beat-planner/Makefile",
+		"/F/Projects/beat-planner/BeatPlannerAndroid/obj/Debug/res/layout/sequenceview.xml",
+		"/F/Projects/beat-planner/BeatPlannerAndroid/src/beatplanner/core/Sequence.cs",
+		"/F/Projects/beat-planner/BeatPlannerAndroid/Resources/layout/SequenceView.axml",
+		"/F/Projects/beat-planner/BeatPlannerAndroid/Resources/values/Strings.xml",
+		"/F/Projects/beat-planner/BeatPlannerAndroid/src/beatplanner/ui/TrackActivity.cs",
+		"/F/Projects/beat-planner/BeatPlannerAndroid/Resources/layout/Track.axml",
+		"/F/Projects/beat-planner/BeatPlannerTests/obj/Debug/android/src/xamarin/android/nunitlite/TestResultActivity.java",
+		"/F/Projects/beat-planner/BeatPlannerTests/obj/Debug/__library_projects__/Xamarin.Android.NUnitLite/library_project_imports/res/layout/test_result.xml",
+		"/F/Projects/beat-planner/BeatPlannerTests/TestsSample.cs",
+		"/F/Projects/beat-planner/beat-planner.sln",
+		"/F/Dropbox/Projects/Haskell/learn/learnio.hi",
+		"/F/Dropbox/Projects/Haskell/learn/capslocker.hs",
+		"/F/Dropbox/Projects/Haskell/learn/capslocker.hi",
+		"/F/Dropbox/Projects/Haskell/math/*.hs",
+		"/F/Dropbox/Medialogy/MED6/RTII/Pathfinding/Assets/BinaryTree.cs",
+		"/F/Projects/beat-planner/src/TrackPlayer.cs",
+		"/F/Projects/beat-planner/BeatPlannerGtk/gtk-gui/gui.stetic",
+		"/F/Projects/beat-planner/Makefile",
+		"/F/Projects/Mono/lib-test/lib-test/lib-test.csproj",
+		"/F/Projects/Mono/lib-test/lib-client/lib-client.csproj",
+		"/F/Projects/beat-planner/src/Metronome.cs",
+		"/F/Projects/beat-planner/beat-planner.csproj",
+		"/F/Projects/beat-planner/src/BeatPlanner.cs",
+		"/F/Projects/beat-planner/BeatPlannerGtk/gtk-gui/generated.cs",
+		"/F/Dropbox/Projects/Showbisse/2014-07-10 Møde.md",
+		"/F/Projects/beat-planner/bin/Debug/assets/track1.txt",
+		"/F/Projects/beat-planner/bin/Debug/assets/track2.txt",
+		"/F/Downloads/Adobe InDesign CS5.5/INSTALLING INSTRUCTIONS.txt",
+		"/F/Dropbox/Medialogy/MED6/RTII/Pathfinding/Assets/Map.cs",
+		"/F/Projects/beat-planner/beat-planner.userprefs",
+		"/F/Dropbox/Medialogy/MED6/MSP/paper/msp_paper_notes_bilingualism.tex",
+		"/F/Dropbox/Medialogy/MED6/MSP/paper/data/Language and Programming_original_2014-06-24.csv",
+		"/F/Setup/Adobe InDesign CS5.5/INSTALLING INSTRUCTIONS.txt"
+	],
+	"find":
+	{
+		"height": 38.0
+	},
+	"find_in_files":
+	{
+		"height": 104.0,
+		"where_history":
+		[
+			"F:\\Dropbox\\Programs\\arduino-1.0.5"
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"UPDATE epi",
+			"Omkostninger",
+			"moved",
+			"search",
+			"F:\\Dropbox\\Programs\\cabal",
+			"rgb",
+			"rgv",
+			"item",
+			"ul.boxes li a",
+			"color",
+			"li.note a",
+			"li.note",
+			"videos",
+			".more-videos",
+			"ul.boxes li a",
+			"li",
+			".post",
+			"li",
+			"note",
+			"float",
+			"\\n\\n",
+			"ghc",
+			"getEpisoode",
+			"channel",
+			"enclosureurl",
+			"encloseureurl",
+			"HaXML",
+			"XML",
+			"Parse",
+			"board",
+			"^\\w.+\\n\\n",
+			"\n",
+			"\\subsection",
+			"article",
+			"\\\\",
+			"^\\w",
+			"\\n\\n",
+			"eval5",
+			"Eval5",
+			"eval5",
+			"tick",
+			"eval4",
+			"Eval4",
+			"eval4",
+			"eval2a",
+			"Eval2a",
+			"eval2a",
+			"eval2",
+			"Eval2",
+			"eval2",
+			"injectSt",
+			"getSt",
+			"putSt",
+			"SimpleState",
+			"State",
+			"s",
+			"case",
+			"lookup",
+			"row",
+			"[Char]",
+			".",
+			"parseCoord",
+			"?",
+			"%G",
+			"&aring;",
+			"&oslash;",
+			"&aelig;",
+			"&nbsp;",
+			"&aelig;",
+			"&oslash;",
+			"&aring;",
+			"htmlentities",
+			"&nbsp;",
+			"&aelig;",
+			"&aring;",
+			"&nbsp;",
+			"&oslash;",
+			"&aring",
+			"&aelig;",
+			"&oslash;",
+			"&aelig;",
+			"&aring;",
+			"OpenDB",
+			"htmlen",
+			"echo",
+			", ",
+			"post",
+			"form",
+			"post",
+			"isEditable",
+			"if($_REQUEST['mode']",
+			"$_REQUEST['mode']",
+			"administration",
+			"ok_msg",
+			"$ok_msg",
+			"ok_msg",
+			"$_SERVER[\"REQUEST_URI\"]",
+			"subdirectory",
+			"UserPermission",
+			"UserOK",
+			"UserOK()",
+			"UserOK",
+			"menu",
+			"$isEditable",
+			"$_SERVER[\"REQUEST_URI\"]",
+			"UserPermis",
+			"log",
+			"ok_msg",
+			"$er_msg",
+			"$Page",
+			" $",
+			"$",
+			"\"",
+			"$path . $subdirectory .",
+			"in",
+			"$subdirectory",
+			"Meter",
+			"npm",
+			"sdk",
+			"plugin",
+			"MeterSpinner",
+			"AttributeSet",
+			"Spinner",
+			"base",
+			"AttributeSet",
+			"Spinner",
+			"BpmV",
+			"playBtn"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+			"\\n",
+			"\"",
+			"$1",
+			"",
+			"Finished",
+			"in",
+			"0.0f",
+			" ConstantDeltaSerie",
+			"ConstantDeltaSerie",
+			"<br/>\\n",
+			"<br/>\\",
+			"\",",
+			"-",
+			"5\\n",
+			"",
+			",",
+			"$1-",
+			"$1- ",
+			"- ",
+			"\\t - ",
+			"\\t -",
+			"- $1",
+			"\\t-",
+			"- ",
+			"ShepherdController",
+			"_NormalMap",
+			"_NormalMap_ST",
+			"_NormalMap",
+			"head",
+			"tail",
+			"IEdge",
+			"BNode<T>",
+			"T",
+			"println",
+			"T",
+			".",
+			"right",
+			"Right",
+			"Left",
+			"BNode",
+			",\n,",
+			",\n",
+			"",
+			"\\1",
+			"\n\\1",
+			"",
+			"empty",
+			"delete",
+			"_prev",
+			"_next",
+			"T"
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 0,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "test.hs",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 48,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								48,
+								48
+							]
+						],
+						"settings":
+						{
+							"BracketHighlighterBusy": false,
+							"WordCountShouldRun": true,
+							"WordCountSyntax": "haskell",
+							"apply_syntax_touched": true,
+							"bh_regions":
+							[
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content"
+							],
+							"line_numbers": true,
+							"syntax": "Packages/Haskell/Haskell.tmLanguage",
+							"vintage_lines.line": 1,
+							"vintage_lines.lines": 1,
+							"vintage_lines.mode": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 38.0
+	},
+	"input":
+	{
+		"height": 31.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.clang":
+	{
+		"height": 100.0
+	},
+	"output.exec":
+	{
+		"height": 174.0
+	},
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"output.markdown":
+	{
+		"height": 98.0
+	},
+	"project": "hs-time-tracker.sublime-project",
+	"replace":
+	{
+		"height": 72.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+			[
+				"formda",
+				"F:\\Dropbox\\xampp\\htdocs\\taarn-net\\inc\\formdata.php"
+			],
+			[
+				"fung",
+				"F:\\Dropbox\\xampp\\htdocs\\taarn-net\\inc\\func_general.php"
+			],
+			[
+				"var_",
+				"F:\\Dropbox\\xampp\\htdocs\\taarn-net\\inc\\var_constants.php"
+			],
+			[
+				"index",
+				"kbd-mangler-2.1\\docs\\index.html"
+			],
+			[
+				"ind",
+				"C:\\Users\\Adam\\AppData\\Local\\Temp\\fz3temp-1\\index.php"
+			],
+			[
+				"inde",
+				"F:\\Dropbox\\xampp\\htdocs\\taarn-net\\index.php"
+			],
+			[
+				"form",
+				"C:\\Users\\Adam\\AppData\\Local\\Temp\\fz3temp-1\\formdata.php"
+			],
+			[
+				"func_ge",
+				"C:\\Users\\Adam\\AppData\\Local\\Temp\\fz3temp-1\\func_general.php"
+			],
+			[
+				"side",
+				"F:\\Dropbox\\xampp\\htdocs\\taarn-net\\sideadmin.php"
+			],
+			[
+				"func",
+				"F:\\Dropbox\\xampp\\htdocs\\taarn-net\\inc\\func_general.php"
+			],
+			[
+				"var",
+				"F:\\Dropbox\\xampp\\htdocs\\taarn-net\\inc\\var_constants.php"
+			],
+			[
+				"beat",
+				"beat-planner\\java\\dk\\aschoen\\beatplanner\\Beat.java"
+			],
+			[
+				"metersp",
+				"beat-planner\\BeatPlannerAndroid\\src\\beatplanner\\ui\\MeterSpinner.cs"
+			],
+			[
+				"seque",
+				"beat-planner\\BeatPlannerAndroid\\src\\beatplanner\\ui\\SequenceView.cs"
+			],
+			[
+				"trackv",
+				"beat-planner\\BeatPlannerAndroid\\src\\beatplanner\\ui\\TrackActivity.cs"
+			],
+			[
+				"be",
+				"beat-planner\\beat-planner.sln"
+			],
+			[
+				"metro",
+				"beat-planner\\src\\Metronome.cs"
+			],
+			[
+				"ran",
+				"F:\\Projects\\MED6\\group-repo\\bp_csharp\\Range.cs"
+			],
+			[
+				"ahk",
+				"adam\\ahk.js"
+			],
+			[
+				"ken",
+				"kbd-mangler-2.1\\jslib\\keynames.js"
+			],
+			[
+				"keysy",
+				"kbd-mangler-2.1\\jslib\\keysyms.js"
+			],
+			[
+				"aux",
+				"kbd-mangler-2.1\\examples\\aux_key.js"
+			],
+			[
+				"thresho",
+				"Assets\\Scripts\\ThresholdFinding\\ThresholdFinder.cs"
+			],
+			[
+				"user",
+				"F:\\Dropbox\\Programs\\SublimeText\\Data\\Packages\\User\\Default (Windows).sublime-keymap"
+			],
+			[
+				"bestpe",
+				"Assets\\Scripts\\ThresholdFinding\\BestPestTrial.cs"
+			],
+			[
+				"exper",
+				"Assets\\Scripts\\Experiment.cs"
+			],
+			[
+				"exp",
+				"Assets\\Scripts\\Experiment.cs"
+			],
+			[
+				"par",
+				"Assets\\Scripts\\Participant.cs"
+			],
+			[
+				"bestpes",
+				"Assets\\Scripts\\ThresholdFinding\\BestPestTrial.cs"
+			],
+			[
+				"thresh",
+				"Assets\\Scripts\\ThresholdFinding\\ThresholdFinderTester.cs"
+			],
+			[
+				"thres",
+				"Assets\\Scripts\\ThresholdFinding\\ThresholdFinder.cs"
+			],
+			[
+				"thre",
+				"Assets\\Scripts\\ThresholdFinding\\ThresholdFinderComponent.cs"
+			],
+			[
+				"componen",
+				"AngryBots1\\Assets\\Custom\\ThresholdFinder\\ThresholdFinderComponent.cs"
+			],
+			[
+				"tria",
+				"AngryBots1\\Assets\\Custom\\ThresholdFinder\\Trial.cs"
+			],
+			[
+				"trialf",
+				"AngryBots1\\Assets\\Custom\\ThresholdFinder\\TrialFactory.cs"
+			],
+			[
+				"trial",
+				"AngryBots1\\Assets\\Custom\\ThresholdFinder\\Trial.cs"
+			],
+			[
+				"bestp",
+				"AngryBots1\\Assets\\Custom\\ThresholdFinder\\BestPestTrial.cs"
+			],
+			[
+				"facto",
+				"AngryBots1\\Assets\\Custom\\ThresholdFinder\\TrialFactory.cs"
+			],
+			[
+				"tester",
+				"AngryBots1\\Assets\\Custom\\ThresholdFinder\\ThresholdFinderTester.cs"
+			],
+			[
+				"factory",
+				"AngryBots1\\Assets\\Custom\\ThresholdFinder\\TrialFactory.cs"
+			],
+			[
+				"tri",
+				"AngryBots1\\Assets\\Custom\\ThresholdFinder\\Trial.cs"
+			],
+			[
+				"const",
+				"AngryBots1\\Assets\\Custom\\ThresholdFinder\\ConstantStepTrial.cs"
+			],
+			[
+				"cons",
+				"AngryBots1\\Assets\\Custom\\ThresholdFinder\\ConstantStepTrial.cs"
+			],
+			[
+				"cont",
+				"Assets\\ContrastCycles.cs"
+			],
+			[
+				"contra",
+				"Assets\\ContrastCyclesShader.shader"
+			],
+			[
+				"csfsh",
+				"Assets\\CSFShader.shader"
+			],
+			[
+				"csf",
+				"Assets\\CSF.cs"
+			],
+			[
+				"simplethre",
+				"AngryBots1\\Assets\\Custom\\ThresholdFinder\\SimpleThresholdDisplay.cs"
+			],
+			[
+				"threshold",
+				"AngryBots1\\Assets\\Custom\\ThresholdFinder\\ThresholdFinderTester.cs"
+			],
+			[
+				"int",
+				"AngryBots1\\Assets\\Custom\\ThresholdFinder\\InterleavedStaircaseTrial.cs"
+			],
+			[
+				"interle",
+				"AngryBots1\\Assets\\Custom\\ThresholdFinder\\InterleavedStaircaseTrial.cs"
+			],
+			[
+				"tod",
+				"wiki\\TODO.md"
+			],
+			[
+				"todo",
+				"wiki\\TODO.md"
+			],
+			[
+				"binar",
+				"Assets\\BinaryTree.cs"
+			],
+			[
+				"map",
+				"Assets\\Map.cs"
+			],
+			[
+				"p",
+				"Assets\\Pathfinder.cs"
+			],
+			[
+				"pathfin",
+				"Assets\\Pathfinder.cs"
+			],
+			[
+				"prio",
+				"Assets\\PriorityQueue.cs"
+			],
+			[
+				"bina",
+				"Assets\\BinaryTree.cs"
+			],
+			[
+				"home",
+				"Home.md"
+			],
+			[
+				"def",
+				"/F/Dropbox/Programs/SublimeText/Data/Packages/User/Default (Windows).sublime-keymap"
+			],
+			[
+				"us",
+				"User"
+			],
+			[
+				"hom",
+				"Home.md"
+			],
+			[
+				"usba",
+				"arduino-1.0.5/hardware/arduino/cores/arduino/USBAPI.h"
+			],
+			[
+				"play",
+				"Scripts/PlayerController.cs"
+			],
+			[
+				"c",
+				"Scripts/CameraController.cs"
+			],
+			[
+				"ied",
+				"Java/Graph/src/IEdge.java"
+			],
+			[
+				"ci",
+				"Java/Graph/src/City.java"
+			],
+			[
+				"cit",
+				"Java/Graph/src/City.java"
+			],
+			[
+				"ed",
+				"Java/Graph/src/Edge.java"
+			],
+			[
+				"gra",
+				"Java/Graph/src/Graph.java"
+			],
+			[
+				"grap",
+				"Java/Graph/src/Graph.java"
+			],
+			[
+				"f",
+				"/F/Dropbox/Scripts/tips.txt"
+			],
+			[
+				"start",
+				"Scripts/start_menu.ahk"
+			]
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 500.0,
+		"selected_items":
+		[
+			[
+				"g",
+				"F:\\Dropbox\\Scripts\\general.sublime-project"
+			],
+			[
+				"",
+				"F:\\Dropbox\\Scripts\\general.sublime-project"
+			],
+			[
+				"by",
+				"F:\\Dropbox\\xampp\\htdocs\\bythepatient\\bythepatient.sublime-project"
+			],
+			[
+				"ta",
+				"F:\\Dropbox\\xampp\\htdocs\\taarn-net\\taarn-net.sublime-project"
+			],
+			[
+				"taar",
+				"F:\\Dropbox\\xampp\\htdocs\\taarn-net\\taarn-net.sublime-project"
+			],
+			[
+				"med",
+				"F:\\Projects\\MED6\\group-repo\\med6group.sublime-project"
+			],
+			[
+				"naj",
+				"F:\\Dropbox\\xampp\\htdocs\\najas\\najas.sublime-project"
+			],
+			[
+				"n",
+				"F:\\Dropbox\\xampp\\htdocs\\najas\\najas.sublime-workspace"
+			],
+			[
+				"gall",
+				"F:\\Dropbox\\xampp\\htdocs\\gallery-admin\\gallery-admin.sublime-project"
+			],
+			[
+				"galler",
+				"/F/Dropbox/xampp/htdocs/gallery-admin/gallery-admin.sublime-project"
+			],
+			[
+				"byth",
+				"/F/Dropbox/xampp/htdocs/bythepatient/bythepatient.sublime-project"
+			],
+			[
+				"naja",
+				"/F/Dropbox/xampp/htdocs/najas/najas.sublime-project"
+			]
+		],
+		"width": 380.0
+	},
+	"select_symbol":
+	{
+		"height": 66.0,
+		"selected_items":
+		[
+			[
+				"GetNei",
+				"GetNeighbors"
+			],
+			[
+				"GetN",
+				"GetNeighbors"
+			],
+			[
+				"Ima",
+				"Image"
+			]
+		],
+		"width": 400.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 189.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}

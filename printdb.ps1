@@ -1,0 +1,5 @@
+echo "tasks`n"
+sqlite3 -column -header .\hstt.db "SELECT * FROM tasks;"
+echo "`n"
+echo "sessions`n"
+sqlite3 -column -header .\hstt.db "SELECT * FROM sessions;"
