@@ -1,1 +1,3 @@
 *.db
+*.sublime-project
+*.sublime-workspace

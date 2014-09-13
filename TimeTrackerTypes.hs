@@ -7,6 +7,8 @@ import Control.Monad.Writer
 import Control.Monad.Reader
 import Data.Time
 import System.Locale
+import System.Time.Utils (renderSecs)
+import Data.Monoid
 
 data Task = Task {
      taskId :: Integer
@@ -19,6 +21,21 @@ data Session = Session {
     ,sessStart :: UTCTime
     ,sessEnd :: Maybe UTCTime
 } deriving (Show)
+
+--instance Monoid NominalDiffTime where
+--	mappend a b = a + b
+--	mzero = fromInteger 0 :: NominalDiffTime
+
+isEnded :: Session -> Bool
+isEnded s = not $ (sessEnd s) == Nothing
+
+sessDuration :: Session -> Maybe NominalDiffTime
+sessDuration sess = case end of
+	Nothing -> Nothing
+	Just endTime -> Just $ diffUTCTime endTime startTime
+	where
+		end = sessEnd sess
+		startTime = sessStart sess
 
 
 taskFromSql :: [SqlValue] -> Task
