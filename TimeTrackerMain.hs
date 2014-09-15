@@ -4,6 +4,7 @@ module Main where
 
 import TimeTrackerDB
 import TimeTrackerTypes
+import TimeTrackerUtils
 import System.Directory (removeFile, doesFileExist)
 import Control.Monad
 import Control.Monad.Trans
@@ -11,6 +12,7 @@ import Control.Monad.Writer
 import Control.Monad.Reader
 import Control.Monad.Error
 import Data.Time
+import Data.Maybe
 import Database.HDBC
 import Database.HDBC.Sqlite3
 import Data.Char (toLower)
@@ -19,6 +21,7 @@ import Network.Socket (withSocketsDo)
 import Control.Exception
 import Prelude hiding (handle, catch)
 import System.Time.Utils
+import Data.Char
 
 
 
@@ -31,7 +34,7 @@ syntaxError = "Usage: ttrack command\n\
               \commands:\n\
               \\t create [task]\t\t\t creates a new task\n\
               \\t start [task]\t\t\t starts tracking task\n\
-              \\t end \t\t\t\t stops tracking task\n\
+              \\t end \t\t\t\t stops tracking current task\n\
               \\t current \t\t\t get current task in progress\n\
               \\t list \t\t\t\t lists all tasks\n\
               \\t time [task] \t\t\t print time spent on task \n\
@@ -51,7 +54,8 @@ handleInput args = do
             tell ["Current task is " ++ taskName task]
             return ()
         ["end"] -> do
-            end
+            sess <- end
+            tell ["Session duration was " ++ (renderSecs $ round $ fromJust $ sessDuration sess)]
             return ()
         ["list"] -> do
             list
@@ -67,16 +71,7 @@ handleInput args = do
             tell [syntaxError]
             return ()
 
---main :: IO ()
---main = withSocketsDo $ handleSqlError $
---    do  args <- getArgs
---        dbh <- connect dbname
---        (r,msg) <- runTrackerMonad (handleInput args) dbh
---        commit dbh
---        mapM_ putStrLn msg
---        disconnect dbh
 
- --with bracket. Maybe better for disconnecting?
 main :: IO ()
 main = withSocketsDo $ handle errorHandler $ bracket acquire finalize proc
     where
@@ -90,7 +85,7 @@ main = withSocketsDo $ handle errorHandler $ bracket acquire finalize proc
                     r <- runTrackerMonad (handleInput args) dbh
                     case r of
                         Left err -> do
-                            putStrLn err
+                            putStrLn $ unwrapTTError err
                             rollback dbh
                         Right (v,msg) -> mapM_ putStrLn msg
 
@@ -100,33 +95,50 @@ main = withSocketsDo $ handle errorHandler $ bracket acquire finalize proc
 
 
 
+
+
 create :: String -> TrackerMonad Task
 create name = do
-    task <- createTask name
-    tell $ ["Created task: " ++ name]
-    return task
+    last <- getLastSession
+    if isEnded last
+        then do
+            task <- createTask name
+            tell $ ["Created task: " ++ name]
+            return task
+        else do
+            throwError $ OtherSessionStarted $ "A session is already in progress. Please close it \
+                                                \before creating a new task."
 
 start :: String -> TrackerMonad Session
 start name = do
-    dbh <- ask
     t <- getTaskByName name
-    s <- startSession t
-    tell ["Started tracking " ++ name]
-    return s
-    `catchError` \e -> do
-        liftIO $ putStrLn $ "No task with name " ++ name ++ " was found. Create new task? (y/n)"
-        resp <- liftIO $ getLine
-        if (map toLower resp == "y")
-            then do create name
-                    start name
-            else do throwError "No action taken"
+    last <- getLastSession
+    if not (isEnded last)
+        then throwError $ OtherSessionStarted $
+                "Can't start a new session when session " ++ (taskName . sessTask $ last)
+                ++ " is already open. Please close it first"
+        else do
+            s <- startSession t
+            tell ["Started tracking " ++ name]
+            return s
+    `catchError` errorHandler
+        where   errorHandler (NoTaskFound msg) = do
+                    liftIO $ putStrLn $ "No task with name " ++ name ++ " was found. Create new task? (y/n)"
+                    resp <- liftIO $ getLine
+                    if (map toLower resp == "y")
+                        then do create name
+                                start name
+                        else do throwError $ OtherError $ "No action taken"
+                errorHandler e = throwError e
+
+
 
 
 current :: TrackerMonad Task
 current = do
     last <- getLastSession
     if isEnded last
-        then throwError "No current task could be found"
+        then throwError $ NoTaskFound $ "No current task could be found"
         else do
             let task = sessTask last
             return $ task
@@ -137,13 +149,36 @@ end :: TrackerMonad Session
 end = do
     lastSess <- getLastSession
     endSess <- endSession lastSess
-    tell ["Ended task " ++ (show . taskName . sessTask) lastSess]
-    return endSess
+    let (Just dur) = sessDuration endSess
+    tellUsr $ "Session duration was " ++ renderDuration dur ++ ".\n Is this correct? (y/n)"
+    resp <- liftIO getLine
+    if isCorrect resp
+        then do
+            tell ["Ended task " ++ (show . taskName . sessTask) lastSess]
+            return endSess
+        else inputDuration endSess
+
+    where   isCorrect r
+                     | (map toUpper r) == "Y" = True
+                     | otherwise = False
+            inputDuration sess = do
+                tellUsr "Please input duration in format [hm]s e.g. 1h30m10s"
+                durString <- liftIO getLine
+                let durDiffTime = parseDuration durString
+                case durDiffTime of
+                    Just d -> do
+                        newSess <- setSessDuration sess d
+                        return newSess
+                    Nothing -> do
+                        liftIO $ putStrLn "Incorrect duration format. Please use hh:mm (e.g. 02:33)"
+                        inputDuration sess
+            tellUsr = liftIO . putStrLn
+
+
 
 
 list :: TrackerMonad [Task]
 list = do
-    dbh <- ask
     tasks <- getTasks
     tell ["Listing tasks..."]
     mapM_ (\t -> tell ['\t':taskName t]) tasks
@@ -152,7 +187,6 @@ list = do
 
 remove :: String -> TrackerMonad (Task, [Session])
 remove name = do
-    dbh <- ask
     task <- removeTask name
     tell ["Removing task " ++ name]
     sessions <- removeTaskSessions task
@@ -162,14 +196,13 @@ remove name = do
 
 time :: String -> TrackerMonad NominalDiffTime
 time n = do
-    dbh <- ask
     task <- getTaskByName n
     sessions <- getTaskSessions task
     case sessions of
         [] -> return (0 :: NominalDiffTime)
         s -> do
-            -- TODO. This will fail when a session is not ended. Fix by either refusing
-            -- or calculating un-ended sessions with end = now. But notify the user
+            -- TODO. This will fail when there is more than one un-ended session or
+            -- if the un-ended session is not the last
             durs <- liftIO $ mapM (sessDurationMonad) s
             let time = foldr (\x acc -> x+acc) 0 durs
             return time

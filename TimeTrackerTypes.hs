@@ -23,12 +23,33 @@ data Session = Session {
     ,sessEnd :: Maybe UTCTime
 } deriving (Show)
 
---instance Monoid NominalDiffTime where
---  mappend a b = a + b
---  mzero = fromInteger 0 :: NominalDiffTime
+data TTError = NoTaskFound String
+             | NoSessionFound String
+             | UnexpectedSqlResult String
+             | TaskAlreadyExists String
+             | OtherSessionStarted String
+             | OtherError String
+             deriving (Show)
+
+instance Error TTError where
+    noMsg = OtherError "An error occured"
+    strMsg s = OtherError s
+
+unwrapTTError :: TTError -> String
+unwrapTTError err@(NoTaskFound s) = s
+unwrapTTError err@(NoSessionFound s) = s
+unwrapTTError err@(UnexpectedSqlResult s) = show err
+unwrapTTError err@(TaskAlreadyExists s) = s
+unwrapTTError err@(OtherSessionStarted s) = s
+unwrapTTError err@(OtherError s) = show err
+
 
 isEnded :: Session -> Bool
 isEnded s = not $ (sessEnd s) == Nothing
+
+-- TODO: Implement this with adding the time to sessStart
+--setSessDuration :: Session -> NominalDiffTime -> Session
+--setSessDuration s dur =
 
 sessDuration :: Session -> Maybe NominalDiffTime
 sessDuration sess = case end of
@@ -55,7 +76,7 @@ taskFromSql [id, name] = Task (fromSql id) (fromSql name)
 sessionFromSql :: [SqlValue] -> Task -> Session
 sessionFromSql [id, _, start, end] task = Session (fromSql id) task (fromSql start) (fromSql end)
 
-type TrackerMonad a = WriterT [String] (ReaderT Connection (ErrorT String IO)) a
+type TrackerMonad a = WriterT [String] (ReaderT Connection (ErrorT TTError IO)) a
 
-runTrackerMonad :: TrackerMonad a -> Connection -> IO (Either String (a, [String]))
+runTrackerMonad :: TrackerMonad a -> Connection -> IO (Either TTError (a, [String]))
 runTrackerMonad m conn = runErrorT (runReaderT (runWriterT m) conn)
