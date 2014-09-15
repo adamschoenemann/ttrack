@@ -20,7 +20,8 @@ import System.Environment
 import Network.Socket (withSocketsDo)
 import Control.Exception
 import Prelude hiding (handle, catch)
-import System.Time.Utils
+import System.Time
+import System.Locale
 import Data.Char
 
 
@@ -62,11 +63,11 @@ handleInput args = do
             list
             return ()
         ["duration"] -> do
-        	d <- duration
-        	task <- current
-        	tell ["Current session is with task: " ++ taskName task
-        		 ++ ". Session duration: " ++ (readSeconds $ round d)]
-        	return ()
+            d <- duration
+            task <- current
+            tell ["Current session is with task: " ++ taskName task
+                 ++ ". Session duration: " ++ (readSeconds $ round d)]
+            return ()
         ["remove", n] -> do
             remove n
             return ()
@@ -74,14 +75,28 @@ handleInput args = do
             t <- time n
             tell $ ["Time spent on task " ++ n ++ " is " ++ (readSeconds $ round t)]
             return ()
-        ["time", from, to] -> do
-        	-- TODO: Implement this using parseISO
-        	-- It should print time spent on task in the time-period given by the interval
-        	-- [from ; to]
-        	-- E.g. make a function in TimeTrackerDB that retrieves sessions within a time period
-        	-- and adds them up
-        	let fromTime = parseISO
-        	return ()
+        ["time", n, from, to] -> do
+            -- TODO: Implement this using parseISO
+            -- It should print time spent on task in the time-period given by the interval
+            -- [from ; to]
+            -- E.g. make a function in TimeTrackerDB that retrieves sessions within a time period
+            -- and adds them up
+            let froms = parseISO from
+            case froms of
+                Left x -> throwError x
+                Right froms' -> do
+                    let tos = parseISO to
+                    case tos of
+                        Left x -> throwError x
+                        Right tos' -> do
+                            t <- getTaskByName n
+                            ss <- getTaskSessionsInInterval t (dateString froms') (dateString tos')
+                            let time = round . getSum . mconcat $
+                                            map (Sum . fromJust . sessDuration) ss
+                            tell ["Time spent on task: " ++ n ++ ": " ++ readSeconds time]
+                            return ()
+                where dateString t = let tc = defaultTimeLocale
+                                     in  formatTime tc "%F %T" t
         _ -> do
             tell [syntaxError]
             return ()
@@ -224,12 +239,12 @@ time n = do
 
 duration :: TrackerMonad NominalDiffTime
 duration = do
-	sess <- getLastSession
-	if isEnded sess
-		then throwError $ NoCurrentSession "No session is currently in progress"
-		else do
-			dur <- liftIO $ sessDurationIO sess
-			return dur
+    sess <- getLastSession
+    if isEnded sess
+        then throwError $ NoCurrentSession "No session is currently in progress"
+        else do
+            dur <- liftIO $ sessDurationIO sess
+            return dur
 
 reset = do
     f <- doesFileExist dbname
