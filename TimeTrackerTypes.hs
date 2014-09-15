@@ -28,6 +28,7 @@ data TTError = NoTaskFound String
              | UnexpectedSqlResult String
              | TaskAlreadyExists String
              | OtherSessionStarted String
+             | NoCurrentSession String
              | OtherError String
              deriving (Show)
 
@@ -41,15 +42,13 @@ unwrapTTError err@(NoSessionFound s) = s
 unwrapTTError err@(UnexpectedSqlResult s) = show err
 unwrapTTError err@(TaskAlreadyExists s) = s
 unwrapTTError err@(OtherSessionStarted s) = s
+unwrapTTError err@(NoCurrentSession s) = s
 unwrapTTError err@(OtherError s) = show err
 
 
 isEnded :: Session -> Bool
 isEnded s = not $ (sessEnd s) == Nothing
 
--- TODO: Implement this with adding the time to sessStart
---setSessDuration :: Session -> NominalDiffTime -> Session
---setSessDuration s dur =
 
 sessDuration :: Session -> Maybe NominalDiffTime
 sessDuration sess = case end of
@@ -59,8 +58,8 @@ sessDuration sess = case end of
         end = sessEnd sess
         startTime = sessStart sess
 
-sessDurationMonad :: Session -> IO NominalDiffTime
-sessDurationMonad sess = do
+sessDurationIO :: Session -> IO NominalDiffTime
+sessDurationIO sess = do
     let dur = sessDuration sess
     case dur of
         Just x -> return x

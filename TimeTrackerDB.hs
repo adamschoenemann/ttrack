@@ -106,6 +106,7 @@ getTaskByName name = do
         r <- liftIO $ quickQuery' dbh "SELECT * FROM tasks WHERE name=?" [toSql name]
         case r of
             [row] -> return $ taskFromSql row
+            [] -> throwError $ NoTaskFound $ "No task with name " ++ name ++ " was found"
             y -> throwError $ UnexpectedSqlResult $ "Unexpected result in getTaskByName: " ++ show y
 
 getLastSession :: TrackerMonad Session

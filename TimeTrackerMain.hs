@@ -36,6 +36,7 @@ syntaxError = "Usage: ttrack command\n\
               \\t start [task]\t\t\t starts tracking task\n\
               \\t end \t\t\t\t stops tracking current task\n\
               \\t current \t\t\t get current task in progress\n\
+              \\t duration \t\t\t print duration of current session\n\
               \\t list \t\t\t\t lists all tasks\n\
               \\t time [task] \t\t\t print time spent on task \n\
               \\t remove [task] \t\t\t removes task and all sessions for that task"
@@ -55,17 +56,23 @@ handleInput args = do
             return ()
         ["end"] -> do
             sess <- end
-            tell ["Session duration was " ++ (renderSecs $ round $ fromJust $ sessDuration sess)]
+            tell ["Session duration was " ++ (readSeconds . round . fromJust $ sessDuration sess)]
             return ()
         ["list"] -> do
             list
             return ()
+        ["duration"] -> do
+        	d <- duration
+        	task <- current
+        	tell ["Current session is with task: " ++ taskName task
+        		 ++ ". Session duration: " ++ (readSeconds $ round d)]
+        	return ()
         ["remove", n] -> do
             remove n
             return ()
         ["time", n] -> do
             t <- time n
-            tell $ ["Time spent on task " ++ n ++ " is " ++ (renderSecs $ round t)]
+            tell $ ["Time spent on task " ++ n ++ " is " ++ (readSeconds $ round t)]
             return ()
         _ -> do
             tell [syntaxError]
@@ -150,7 +157,7 @@ end = do
     lastSess <- getLastSession
     endSess <- endSession lastSess
     let (Just dur) = sessDuration endSess
-    tellUsr $ "Session duration was " ++ renderDuration dur ++ ".\n Is this correct? (y/n)"
+    tellUsr $ "Session duration was " ++ renderDuration dur ++ ".\nIs this correct? (y/n)"
     resp <- liftIO getLine
     if isCorrect resp
         then do
@@ -203,10 +210,18 @@ time n = do
         s -> do
             -- TODO. This will fail when there is more than one un-ended session or
             -- if the un-ended session is not the last
-            durs <- liftIO $ mapM (sessDurationMonad) s
+            durs <- liftIO $ mapM (sessDurationIO) s
             let time = foldr (\x acc -> x+acc) 0 durs
             return time
 
+duration :: TrackerMonad NominalDiffTime
+duration = do
+	sess <- getLastSession
+	if isEnded sess
+		then throwError $ NoCurrentSession "No session is currently in progress"
+		else do
+			dur <- liftIO $ sessDurationIO sess
+			return dur
 
 reset = do
     f <- doesFileExist dbname

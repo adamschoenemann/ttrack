@@ -25,6 +25,22 @@ parseDuration str = parseDuration' str 0 0
           parseSep 'm' = 60
           parseSep 'h' = 60 * 60
 
+divRemaind :: Integer -> Integer -> (Integer, Integer)
+divRemaind a b = let x = a `div` b
+                     r = a - (x*b)
+                 in  (x, r)
+
+hours :: Integer -> (Integer, Integer)
+hours a = a `divRemaind` (60 * 60)
+
+minutes :: Integer -> (Integer, Integer)
+minutes a = a `divRemaind` 60
+
+readSeconds :: Integer -> String
+readSeconds s = let (h, s') = hours s
+                    (m, s'') = minutes s'
+                    format x c = if x > 0 then (show x) ++ c else ""
+                in (format h "h") ++ (format m "m") ++ format s'' "s"
 
 
 
@@ -44,3 +60,23 @@ trim = trim' . reverse . trim' . reverse
 
 renderDuration :: NominalDiffTime -> String
 renderDuration = renderSecs . round
+
+-- Takes a date string in (partial) ISO format and returns a format string
+-- E.g 2014-09-15 16:03:01
+formatFromDateString :: String -> String
+formatFromDateString date = let splits = split (trim date) ' '
+							in  case splits of
+								[day] -> parseDay day
+								[day, time] -> parseDay day ++ " " ++ parseTime time
+    where 	parseDay day = 	let splits = split (trim day) '-'
+    					   	in case splits of
+    					   		[] -> error "At least a year must be supplied"
+    					   		[y] -> "%Y"
+    					   		[y,m] -> "%Y-%m"
+    					   		[y,m,d] -> "%F"
+    		parseTime time = let splits = split (trim time) ':'
+    						 in case splits of
+    						 	[] -> ""
+    						 	[h] -> "%H"
+    						 	[h,m] -> "%R"
+    						 	[h,m,s] -> "%T"
