@@ -74,6 +74,14 @@ handleInput args = do
             t <- time n
             tell $ ["Time spent on task " ++ n ++ " is " ++ (readSeconds $ round t)]
             return ()
+        ["time", from, to] -> do
+        	-- TODO: Implement this using parseISO
+        	-- It should print time spent on task in the time-period given by the interval
+        	-- [from ; to]
+        	-- E.g. make a function in TimeTrackerDB that retrieves sessions within a time period
+        	-- and adds them up
+        	let fromTime = parseISO
+        	return ()
         _ -> do
             tell [syntaxError]
             return ()

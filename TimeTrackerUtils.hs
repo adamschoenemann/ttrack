@@ -1,9 +1,14 @@
+{-# LANGUAGE FlexibleInstances #-}
+
 module TimeTrackerUtils where
 
+import TimeTrackerTypes
 import Data.Time
 import Data.Char
-import System.Time.Utils
-
+import Data.Monoid
+import Control.Monad
+import Control.Monad.Error
+import System.Locale
 
 
 -- Parses a duration of format hms e.g. 1h30m10s
@@ -59,24 +64,46 @@ trim = trim' . reverse . trim' . reverse
           isSpace x = x == ' '
 
 renderDuration :: NominalDiffTime -> String
-renderDuration = renderSecs . round
+renderDuration = readSeconds . round
+
+parseISO :: String -> Either TTError UTCTime
+parseISO str = do
+    format <- formatFromDateString str
+    let time = parseTime defaultTimeLocale format str
+    case time of
+        Nothing -> Left $ OtherError $ "Timeformat '" ++
+                    format ++ "'' parsed from date string '" ++ str ++ "' is invalid"
+        Just t -> Right t
+
+-- Make Either ErrorT a an instance of monoid for concatenation.
+-- WITH short-circuiting
+instance (Monoid a) => Monoid (Either TTError a) where
+    mempty = (Right mempty)
+    mappend (Left x) _ = (Left x)
+    mappend _ (Left x) = (Left x)
+    mappend (Right a) (Right b) = (Right (a `mappend` b))
 
 -- Takes a date string in (partial) ISO format and returns a format string
 -- E.g 2014-09-15 16:03:01
-formatFromDateString :: String -> String
-formatFromDateString date = let splits = split (trim date) ' '
-							in  case splits of
-								[day] -> parseDay day
-								[day, time] -> parseDay day ++ " " ++ parseTime time
-    where 	parseDay day = 	let splits = split (trim day) '-'
-    					   	in case splits of
-    					   		[] -> error "At least a year must be supplied"
-    					   		[y] -> "%Y"
-    					   		[y,m] -> "%Y-%m"
-    					   		[y,m,d] -> "%F"
-    		parseTime time = let splits = split (trim time) ':'
-    						 in case splits of
-    						 	[] -> ""
-    						 	[h] -> "%H"
-    						 	[h,m] -> "%R"
-    						 	[h,m,s] -> "%T"
+formatFromDateString :: String -> Either TTError String
+formatFromDateString date =
+    let splits = split (trim date) ' '
+    in  case splits of
+        [day] -> parseDayFormat day
+        [day, time] -> mconcat [parseDayFormat day, Right " ", parseTimeFormat time]
+
+parseDayFormat :: String -> Either TTError String
+parseDayFormat day = let splits = split (trim day) '-'
+               in case splits of
+                   [] -> Left $ OtherError "At least a year must be supplied"
+                   [y] -> Right "%Y"
+                   [y,m] -> Right "%Y-%m"
+                   [y,m,d] -> Right "%F"
+
+parseTimeFormat :: String -> Either TTError String
+parseTimeFormat time = let splits = split (trim time) ':'
+                 in case splits of
+                    [] -> mzero
+                    [h] -> Right "%H"
+                    [h,m] -> Right "%R"
+                    [h,m,s] -> Right "%T"

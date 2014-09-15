@@ -63,8 +63,20 @@ startSession task = do
             [toSql $ taskId task, toSql start, toSql (Nothing :: Maybe UTCTime)]
     r <- liftIO $ quickQuery' dbh "SELECT * FROM sessions WHERE start=?" [toSql start]
     case r of
-        [x] -> return $ sessionFromSql x task
+        [x] -> return $ sessFromSql x task
         y -> throwError $ UnexpectedSqlResult $ "startSession: unexpected result: " ++ show y
+
+
+addSession :: Session -> TrackerMonad Session
+addSession sess = do
+    dbh <- ask
+    liftIO $ run dbh "INSERT INTO sessions (taskId, start, end) VALUES (?, ?, ?)" $
+                     sessToSql sess
+    r <- liftIO $ quickQuery' dbh "SELECT id FROM sessions WHERE taskId=? AND start=? AND end=?"
+                $ sessToSql sess
+    case r of
+        [[id]] -> return $ sess {sessId = fromSql id}
+        y -> throwError $ UnexpectedSqlResult $ "addSession: unexpected result: " ++ show y
 
 
 endSession :: Session -> TrackerMonad Session
@@ -117,7 +129,7 @@ getLastSession = do
         [] -> throwError $ NoSessionFound $ "Error in getLastSession: No sessions found"
         [row@[id, tid, start, end]] -> do
             task <- getTaskById (fromSql tid)
-            return $ sessionFromSql row task
+            return $ sessFromSql row task
 
 
 getTasks :: TrackerMonad [Task]
@@ -142,7 +154,7 @@ getTaskSessions task = do
     r <- liftIO $ quickQuery' dbh "SELECT * FROM sessions WHERE taskId=?" [toSql $ taskId task]
     case r of
         [] -> return []
-        rows -> return $ map (`sessionFromSql` task) rows
+        rows -> return $ map (`sessFromSql` task) rows
 
 removeTaskSessions :: Task -> TrackerMonad [Session]
 removeTaskSessions task = do

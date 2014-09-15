@@ -72,8 +72,13 @@ sessDurationIO sess = do
 taskFromSql :: [SqlValue] -> Task
 taskFromSql [id, name] = Task (fromSql id) (fromSql name)
 
-sessionFromSql :: [SqlValue] -> Task -> Session
-sessionFromSql [id, _, start, end] task = Session (fromSql id) task (fromSql start) (fromSql end)
+sessFromSql :: [SqlValue] -> Task -> Session
+sessFromSql [id, _, start, end] task = Session (fromSql id) task (fromSql start) (fromSql end)
+
+sessToSql :: Session -> [SqlValue]
+sessToSql sess = [toSql $ taskId $ sessTask sess
+					,toSql $ sessStart sess
+					,toSql $ sessEnd sess]
 
 type TrackerMonad a = WriterT [String] (ReaderT Connection (ErrorT TTError IO)) a
 
