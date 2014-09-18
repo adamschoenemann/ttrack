@@ -68,6 +68,14 @@ handleInput args = do
             tell ["Current session is with task: " ++ taskName task
                  ++ ". Session duration: " ++ (readSeconds $ round d)]
             return ()
+        ["report", n] -> do
+            task <- getTaskByName n
+            sessions <- getTaskSessions task
+            mapM printSess sessions
+            return ()
+                where printSess x = tell [showSess x]
+                      showSess s = (show $ sessStart s) ++ " | " ++ (show $ sessEnd s) ++ " | " ++
+                                   (show $ readSeconds $ round $ fromJust $ sessDuration s)
         ["remove", n] -> do
             remove n
             return ()
@@ -76,27 +84,15 @@ handleInput args = do
             tell $ ["Time spent on task " ++ n ++ " is " ++ (readSeconds $ round t)]
             return ()
         ["time", n, from, to] -> do
-            -- TODO: Implement this using parseISO
-            -- It should print time spent on task in the time-period given by the interval
-            -- [from ; to]
-            -- E.g. make a function in TimeTrackerDB that retrieves sessions within a time period
-            -- and adds them up
-            let froms = parseISO from
-            case froms of
-                Left x -> throwError x
-                Right froms' -> do
-                    let tos = parseISO to
-                    case tos of
-                        Left x -> throwError x
-                        Right tos' -> do
-                            t <- getTaskByName n
-                            ss <- getTaskSessionsInInterval t (dateString froms') (dateString tos')
-                            let time = round . getSum . mconcat $
-                                            map (Sum . fromJust . sessDuration) ss
-                            tell ["Time spent on task: " ++ n ++ ": " ++ readSeconds time]
-                            return ()
-                where dateString t = let tc = defaultTimeLocale
-                                     in  formatTime tc "%F %T" t
+            -- TODO: Take account of rounding between from and to... If you understand what I mean?
+            froms <- parseTimeInput from
+            tos <- parseTimeInput to
+            t <- getTaskByName n
+            ss <- getTaskSessionsInInterval t froms tos
+            --let time = round . getSum . mconcat $ map (Sum . fromJust . sessDuration) ss
+            let time = sum $ map (toInteger . round . fromJust . sessDuration) ss
+            tell ["Time spent on task: " ++ n ++ ": " ++ readSeconds time]
+            return ()
         _ -> do
             tell [syntaxError]
             return ()
@@ -230,12 +226,12 @@ time n = do
     sessions <- getTaskSessions task
     case sessions of
         [] -> return (0 :: NominalDiffTime)
-        s -> do
+        ss -> do
             -- TODO. This will fail when there is more than one un-ended session or
             -- if the un-ended session is not the last
-            durs <- liftIO $ mapM (sessDurationIO) s
-            let time = foldr (\x acc -> x+acc) 0 durs
-            return time
+            durs <- liftIO $ mapM (sessDurationIO) ss
+            --let time = sum $ map (toInteger . round . fromJust . sessDuration) ss
+            return $ sum durs
 
 duration :: TrackerMonad NominalDiffTime
 duration = do

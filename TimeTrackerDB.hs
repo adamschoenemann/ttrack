@@ -67,15 +67,17 @@ startSession task = do
         y -> throwError $ UnexpectedSqlResult $ "startSession: unexpected result: " ++ show y
 
 
-getTaskSessionsInInterval :: Task -> String  -> String -> TrackerMonad [Session]
+getTaskSessionsInInterval :: Task -> UTCTime -> UTCTime -> TrackerMonad [Session]
 getTaskSessionsInInterval task from to = do
     dbh <- ask
     r <- liftIO $ quickQuery' dbh
-                "SELECT * FROM sessions WHERE start > datetime(?) AND end < datetime(?)"
-                [toSql from, toSql to]
+                "SELECT * FROM sessions WHERE taskId=? AND start > datetime(?) AND end < datetime(?)"
+                [toSql $ taskId task, toSql $ utcToString from, toSql $ utcToString to]
     case r of
         [] -> throwError $ NoSessionFound $ "No sessions found between " ++ from ++ " and " ++ to
         rows -> return $ map (`sessFromSql` task) rows
+    where utcToString t = let tc = defaultTimeLocale
+                          in  formatTime tc "%F %T" t
 
 
 addSession :: Session -> TrackerMonad Session

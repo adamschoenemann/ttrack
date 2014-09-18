@@ -63,18 +63,6 @@ trim = trim' . reverse . trim' . reverse
     where trim' s = dropWhile isSpace s
           isSpace x = x == ' '
 
-renderDuration :: NominalDiffTime -> String
-renderDuration = readSeconds . round
-
-parseISO :: String -> Either TTError UTCTime
-parseISO str = do
-    format <- formatFromDateString str
-    let time = parseTime defaultTimeLocale format str
-    case time of
-        Nothing -> Left $ OtherError $ "Timeformat '" ++
-                    format ++ "'' parsed from date string '" ++ str ++ "' is invalid"
-        Just t -> Right t
-
 -- Make Either ErrorT a an instance of monoid for concatenation.
 -- WITH short-circuiting
 instance (Monoid a) => Monoid (Either TTError a) where
@@ -83,27 +71,55 @@ instance (Monoid a) => Monoid (Either TTError a) where
     mappend _ (Left x) = (Left x)
     mappend (Right a) (Right b) = (Right (a `mappend` b))
 
+renderDuration :: NominalDiffTime -> String
+renderDuration = readSeconds . round
+
+parseISO :: String -> TrackerMonad UTCTime
+parseISO str = do
+    format <- formatFromDateString str
+    let time = parseTime defaultTimeLocale format str
+    case time of
+        Nothing -> throwError $ OtherError $ "Timeformat '" ++
+                    format ++ "'' parsed from date string '" ++ str ++ "' is invalid"
+        Just t -> return t
+
+
+
 -- Takes a date string in (partial) ISO format and returns a format string
 -- E.g 2014-09-15 16:03:01
-formatFromDateString :: String -> Either TTError String
+formatFromDateString :: String -> TrackerMonad String
 formatFromDateString date =
     let splits = split (trim date) ' '
     in  case splits of
         [day] -> parseDayFormat day
-        [day, time] -> mconcat [parseDayFormat day, Right " ", parseTimeFormat time]
+        [day, time] -> do
+            df <- parseDayFormat day
+            tf <- parseTimeFormat time
+            return $ df ++ " " ++ tf
 
-parseDayFormat :: String -> Either TTError String
+parseDayFormat :: String -> TrackerMonad String
 parseDayFormat day = let splits = split (trim day) '-'
                in case splits of
-                   [] -> Left $ OtherError "At least a year must be supplied"
-                   [y] -> Right "%Y"
-                   [y,m] -> Right "%Y-%m"
-                   [y,m,d] -> Right "%F"
+                   [] -> throwError $ OtherError "At least a year must be supplied"
+                   [y] -> return "%Y"
+                   [y,m] -> return "%Y-%m"
+                   [y,m,d] -> return "%F"
 
-parseTimeFormat :: String -> Either TTError String
+parseTimeFormat :: String -> TrackerMonad String
 parseTimeFormat time = let splits = split (trim time) ':'
                  in case splits of
-                    [] -> mzero
-                    [h] -> Right "%H"
-                    [h,m] -> Right "%R"
-                    [h,m,s] -> Right "%T"
+                    [h] -> return "%H"
+                    [h,m] -> return "%R"
+                    [h,m,s] -> return "%T"
+                    _ -> throwError $ OtherError $ "Invalid format " ++ time ++ " was supplied"
+
+parseTimeInput :: String -> TrackerMonad UTCTime
+parseTimeInput "now" = liftIO $ getCurrentTime
+parseTimeInput "yesterday" = do
+    now <- liftIO getCurrentTime
+    let nowMinus24h = addUTCTime ((-60)*60*24 :: NominalDiffTime) now
+    parseISO $ show $ utctDay nowMinus24h
+parseTimeInput "today" = do
+    now <- liftIO getCurrentTime
+    parseISO $ show $ utctDay now
+parseTimeInput i = parseISO i
