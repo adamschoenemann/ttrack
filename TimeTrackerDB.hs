@@ -75,8 +75,8 @@ getTaskSessionsInInterval task from to = do
                 "SELECT * FROM sessions WHERE taskId=? AND start > datetime(?) AND end < datetime(?)"
                 [toSql $ taskId task, toSql $ utcToISO from, toSql $ utcToISO to]
     case r of
-        [] -> throwError $ NoSessionFound $
-                "No sessions found between " ++ (utcToISO from) ++ " and " ++ (utcToISO to)
+        [] -> throwError $ NoSessionFound
+                ("No sessions found between " ++ (utcToISO from) ++ " and " ++ (utcToISO to)) task
         rows -> return $ map (`sessFromSql` task) rows
 
 
@@ -98,7 +98,7 @@ endSession sess = do
     dbh <- ask
     r <- liftIO $ doSql dbh
     case r of
-        [] -> throwError $ NoSessionFound $ "endSession: unexpected empty result"
+        [] -> throwError $ NoSessionFound "endSession: unexpected empty result" (sessTask sess)
         [[end]] -> return $ sess {sessEnd = fromSql end}
         y -> throwError $ UnexpectedSqlResult $ "endSession: unexpected result: " ++ show y
     where doSql dbh = do
@@ -140,7 +140,7 @@ getLastSession = do
     dbh <- ask
     r <- liftIO $ quickQuery' dbh "SELECT * FROM sessions ORDER BY datetime(start) DESC LIMIT 1" []
     case r of
-        [] -> throwError $ NoSessionFound $ "Error in getLastSession: No sessions found"
+        [] -> throwError $ NoLastSession $ "Error in getLastSession: No sessions found"
         [row@[id, tid, start, end]] -> do
             task <- getTaskById (fromSql tid)
             return $ sessFromSql row task

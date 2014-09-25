@@ -24,11 +24,12 @@ data Session = Session {
 } deriving (Show)
 
 data TTError = NoTaskFound String
-             | NoSessionFound String
+             | NoSessionFound String Task
              | UnexpectedSqlResult String
              | TaskAlreadyExists String
              | OtherSessionStarted String
              | NoCurrentSession String
+             | NoLastSession String
              | OtherError String
              deriving (Show)
 
@@ -38,7 +39,7 @@ instance Error TTError where
 
 unwrapTTError :: TTError -> String
 unwrapTTError err@(NoTaskFound s) = s
-unwrapTTError err@(NoSessionFound s) = s
+unwrapTTError err@(NoSessionFound s _) = s
 unwrapTTError err@(UnexpectedSqlResult s) = show err
 unwrapTTError err@(TaskAlreadyExists s) = s
 unwrapTTError err@(OtherSessionStarted s) = s

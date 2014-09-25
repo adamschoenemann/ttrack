@@ -5,7 +5,8 @@ module Main where
 import TimeTrackerDB
 import TimeTrackerTypes
 import TimeTrackerUtils
-import System.Directory (removeFile, doesFileExist)
+import System.Directory
+import System.FilePath
 import Control.Monad
 import Control.Monad.Trans
 import Control.Monad.Writer
@@ -25,9 +26,12 @@ import System.Locale
 import Data.Char
 
 
+appname = "ttrack"
 
 dbname :: String
-dbname = "hstt.db"
+dbname = appname ++ ".db"
+
+dirEnvVar = "TTRACK_DIR"
 
 syntaxError :: String
 syntaxError = "Usage: ttrack command\n\
@@ -38,6 +42,7 @@ syntaxError = "Usage: ttrack command\n\
               \\t end \t\t\t\t stops tracking current task\n\
               \\t current \t\t\t get current task in progress\n\
               \\t duration \t\t\t print duration of current session\n\
+              \\t report [task] \t\t\t print a list of sessions for the task\n\
               \\t list \t\t\t\t lists all tasks\n\
               \\t time [task] \t\t\t print time spent on task \n\
               \\t remove [task] \t\t\t removes task and all sessions for that task"
@@ -71,10 +76,8 @@ handleInput args = do
         ["report", n] -> do
             task <- getTaskByName n
             sessions <- getTaskSessions task
-            mapM printSess sessions
+            mapM (\x -> tell [showSess x]) sessions
             return ()
-                where printSess x = tell [showSess x]
-
         ["remove", n] -> do
             remove n
             return ()
@@ -95,8 +98,21 @@ main :: IO ()
 main = withSocketsDo $ handle errorHandler $ bracket acquire finalize proc
     where
         acquire = do
-            dbh <- connect dbname
+            dir <- getDir
+            dirExists <- doesDirectoryExist dir
+            when (not $ dirExists)
+                (createDirectory dir)
+            dbh <- connect $ dir </> dbname
             return dbh
+            where getDir = do
+                    ttrackDir <- lookupEnv dirEnvVar
+                    case ttrackDir of
+                        Nothing -> do
+                            defaultDir <- getAppUserDataDirectory appname
+                            putStrLn $ "Environment variable " ++ dirEnvVar ++
+                                " not set. Defaulting to " ++ defaultDir
+                            return defaultDir
+                        Just dir -> return dir
 
         proc dbh = do withTransaction dbh doSql
             where doSql dbh = do
@@ -127,7 +143,7 @@ create name = do
                 \before creating a new task."
     `catchError` errorHandler
     where
-            errorHandler (NoSessionFound msg) = createNew
+            errorHandler (NoLastSession msg) = createNew
             createNew = do
                 task <- createTask name
                 tell $ ["Created task: " ++ name]
@@ -141,21 +157,23 @@ start name = do
         then throwError $ OtherSessionStarted $
             "Can't start a new session when session " ++ (taskName . sessTask $ last)
             ++ " is already open. Please close it first"
-        else do
-            s <- startSession t
-            tell ["Started tracking " ++ name]
-            return s
+        else startSession' t
     `catchError` errorHandler
-        where   errorHandler (NoTaskFound msg) = createNew
-                errorHandler (NoSessionFound msg) = createNew
-                errorHandler e = throwError e
-                createNew = do
-                    liftIO $ putStrLn $ "No task with name " ++ name ++ " was found. Create new task? (y/n)"
-                    resp <- liftIO $ getLine
-                    if (map toLower resp == "y")
-                        then do create name
-                                start name
-                        else do throwError $ OtherError $ "No action taken"
+    where   errorHandler (NoTaskFound msg) = createNew
+            errorHandler (NoLastSession msg) = do t <- getTaskByName name
+                                                  startSession' t
+            errorHandler e = throwError e
+            createNew = do
+                liftIO $ putStrLn $ "No task with name " ++ name ++ " was found. Create new task? (y/n)"
+                resp <- liftIO $ getLine
+                if (map toLower resp == "y")
+                    then do create name
+                            start name
+                    else do throwError $ OtherError $ "No action taken"
+            startSession' t = do
+                s <- startSession t
+                tell ["Started tracking " ++ name]
+                return s
 
 
 

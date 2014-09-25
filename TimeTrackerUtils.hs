@@ -129,5 +129,8 @@ utcToISO t = let tc = defaultTimeLocale
              in  formatTime tc "%F %T" t
 
 showSess :: Session -> String
-showSess s = (show $ sessStart s) ++ " | " ++ (show $ sessEnd s) ++ " | " ++
+showSess s = (show $ sessStart s) ++ " | " ++ (showEnd s) ++ " | " ++
           (show $ readSeconds $ round $ fromJust $ sessDuration s)
+        where showEnd s = case (sessEnd s) of
+                            Nothing -> "Unended"
+                            Just end -> show end
