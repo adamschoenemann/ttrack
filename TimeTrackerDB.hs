@@ -1,5 +1,6 @@
 module TimeTrackerDB where
 import TimeTrackerTypes
+import TimeTrackerUtils
 import Database.HDBC
 import Database.HDBC.Sqlite3
 import Control.Monad (when)
@@ -72,12 +73,12 @@ getTaskSessionsInInterval task from to = do
     dbh <- ask
     r <- liftIO $ quickQuery' dbh
                 "SELECT * FROM sessions WHERE taskId=? AND start > datetime(?) AND end < datetime(?)"
-                [toSql $ taskId task, toSql $ utcToString from, toSql $ utcToString to]
+                [toSql $ taskId task, toSql $ utcToISO from, toSql $ utcToISO to]
     case r of
-        [] -> throwError $ NoSessionFound $ "No sessions found between " ++ from ++ " and " ++ to
+        [] -> throwError $ NoSessionFound $
+                "No sessions found between " ++ (utcToISO from) ++ " and " ++ (utcToISO to)
         rows -> return $ map (`sessFromSql` task) rows
-    where utcToString t = let tc = defaultTimeLocale
-                          in  formatTime tc "%F %T" t
+
 
 
 addSession :: Session -> TrackerMonad Session
@@ -166,6 +167,7 @@ getTaskSessions task = do
     dbh <- ask
     r <- liftIO $ quickQuery' dbh "SELECT * FROM sessions WHERE taskId=?" [toSql $ taskId task]
     case r of
+        --[] -> throwError $ NoSessionFound $ "No sessions found for task " ++ taskName task
         [] -> return []
         rows -> return $ map (`sessFromSql` task) rows
 

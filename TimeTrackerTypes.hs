@@ -68,7 +68,6 @@ sessDurationIO sess = do
             return $ diffUTCTime cur (sessStart sess)
 
 
-
 taskFromSql :: [SqlValue] -> Task
 taskFromSql [id, name] = Task (fromSql id) (fromSql name)
 

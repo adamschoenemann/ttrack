@@ -74,8 +74,7 @@ handleInput args = do
             mapM printSess sessions
             return ()
                 where printSess x = tell [showSess x]
-                      showSess s = (show $ sessStart s) ++ " | " ++ (show $ sessEnd s) ++ " | " ++
-                                   (show $ readSeconds $ round $ fromJust $ sessDuration s)
+
         ["remove", n] -> do
             remove n
             return ()
@@ -84,14 +83,8 @@ handleInput args = do
             tell $ ["Time spent on task " ++ n ++ " is " ++ (readSeconds $ round t)]
             return ()
         ["time", n, from, to] -> do
-            -- TODO: Take account of rounding between from and to... If you understand what I mean?
-            froms <- parseTimeInput from
-            tos <- parseTimeInput to
-            t <- getTaskByName n
-            ss <- getTaskSessionsInInterval t froms tos
-            --let time = round . getSum . mconcat $ map (Sum . fromJust . sessDuration) ss
-            let time = sum $ map (toInteger . round . fromJust . sessDuration) ss
-            tell ["Time spent on task: " ++ n ++ ": " ++ readSeconds time]
+            time <- timeInInterval n from to
+            tell ["Time spent on task: " ++ n ++ ": " ++ readSeconds (round time)]
             return ()
         _ -> do
             tell [syntaxError]
@@ -127,13 +120,18 @@ create :: String -> TrackerMonad Task
 create name = do
     last <- getLastSession
     if isEnded last
-        then do
-            task <- createTask name
-            tell $ ["Created task: " ++ name]
-            return task
+        then createNew
         else do
-            throwError $ OtherSessionStarted $ "A session is already in progress. Please close it \
-                                                \before creating a new task."
+            throwError $ OtherSessionStarted $
+                "A session is already in progress. Please close it \
+                \before creating a new task."
+    `catchError` errorHandler
+    where
+            errorHandler (NoSessionFound msg) = createNew
+            createNew = do
+                task <- createTask name
+                tell $ ["Created task: " ++ name]
+                return task
 
 start :: String -> TrackerMonad Session
 start name = do
@@ -141,21 +139,23 @@ start name = do
     last <- getLastSession
     if not (isEnded last)
         then throwError $ OtherSessionStarted $
-                "Can't start a new session when session " ++ (taskName . sessTask $ last)
-                ++ " is already open. Please close it first"
+            "Can't start a new session when session " ++ (taskName . sessTask $ last)
+            ++ " is already open. Please close it first"
         else do
             s <- startSession t
             tell ["Started tracking " ++ name]
             return s
     `catchError` errorHandler
-        where   errorHandler (NoTaskFound msg) = do
+        where   errorHandler (NoTaskFound msg) = createNew
+                errorHandler (NoSessionFound msg) = createNew
+                errorHandler e = throwError e
+                createNew = do
                     liftIO $ putStrLn $ "No task with name " ++ name ++ " was found. Create new task? (y/n)"
                     resp <- liftIO $ getLine
                     if (map toLower resp == "y")
                         then do create name
                                 start name
                         else do throwError $ OtherError $ "No action taken"
-                errorHandler e = throwError e
 
 
 
@@ -220,18 +220,24 @@ remove name = do
     return (task, sessions)
 
 
+timeInInterval :: String -> String -> String -> TrackerMonad NominalDiffTime
+timeInInterval name from to = do
+    froms <- parseTimeInput from
+    tos <- parseTimeInput to
+    t <- getTaskByName name
+    ss <- getTaskSessionsInInterval t froms tos
+    let time = sum $ map (toInteger . round . fromJust . sessDuration) ss
+    return $ (fromInteger time :: NominalDiffTime)
+
 time :: String -> TrackerMonad NominalDiffTime
 time n = do
     task <- getTaskByName n
     sessions <- getTaskSessions task
-    case sessions of
-        [] -> return (0 :: NominalDiffTime)
-        ss -> do
-            -- TODO. This will fail when there is more than one un-ended session or
-            -- if the un-ended session is not the last
-            durs <- liftIO $ mapM (sessDurationIO) ss
-            --let time = sum $ map (toInteger . round . fromJust . sessDuration) ss
-            return $ sum durs
+    -- TODO. This will fail when there is more than one un-ended session or
+    -- if the un-ended session is not the last
+    durs <- liftIO $ mapM (sessDurationIO) sessions
+    --let time = sum $ map (toInteger . round . fromJust . sessDuration) ss
+    return $ sum durs
 
 duration :: TrackerMonad NominalDiffTime
 duration = do

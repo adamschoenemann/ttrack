@@ -6,6 +6,7 @@ import TimeTrackerTypes
 import Data.Time
 import Data.Char
 import Data.Monoid
+import Data.Maybe
 import Control.Monad
 import Control.Monad.Error
 import System.Locale
@@ -117,9 +118,16 @@ parseTimeInput :: String -> TrackerMonad UTCTime
 parseTimeInput "now" = liftIO $ getCurrentTime
 parseTimeInput "yesterday" = do
     now <- liftIO getCurrentTime
-    let nowMinus24h = addUTCTime ((-60)*60*24 :: NominalDiffTime) now
-    parseISO $ show $ utctDay nowMinus24h
+    return $ UTCTime (addDays (-1) $ utctDay now) 0
 parseTimeInput "today" = do
     now <- liftIO getCurrentTime
     parseISO $ show $ utctDay now
 parseTimeInput i = parseISO i
+
+utcToISO :: UTCTime -> String
+utcToISO t = let tc = defaultTimeLocale
+             in  formatTime tc "%F %T" t
+
+showSess :: Session -> String
+showSess s = (show $ sessStart s) ++ " | " ++ (show $ sessEnd s) ++ " | " ++
+          (show $ readSeconds $ round $ fromJust $ sessDuration s)
