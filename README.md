@@ -20,11 +20,11 @@ commands:
 # Install
 - clone the repository
 - Issue commands
-
+````
 	cabal config
 	cabal build
-	# optinally
+	# optionally
 	cabal install
-
+````
 The generated exectuable is called `ttrack`.
 `ttrack` creates a SQLite database file to keep track of your time. You can specify the location using the environment variable `TTRACK_DIR`. By default, it uses your default app directory (e.g. C:\Users\user-name\AppData\Roaming on Windows).
