@@ -37,15 +37,15 @@ syntaxError :: String
 syntaxError = "Usage: ttrack command\n\
               \\n\
               \commands:\n\
-              \\t create [task]\t\t\t creates a new task\n\
-              \\t start [task]\t\t\t starts tracking task\n\
+              \\t create {task}\t\t\t creates a new task\n\
+              \\t start {task}\t\t\t starts tracking task\n\
               \\t end \t\t\t\t stops tracking current task\n\
               \\t current \t\t\t get current task in progress\n\
               \\t duration \t\t\t print duration of current session\n\
-              \\t report [task] \t\t\t print a list of sessions for the task\n\
+              \\t report {task} \t\t\t print a list of sessions for the task\n\
               \\t list \t\t\t\t lists all tasks\n\
-              \\t time [task] \t\t\t print time spent on task \n\
-              \\t remove [task] \t\t\t removes task and all sessions for that task"
+              \\t time {task} [from to] \t\t print time spent on task \n\
+              \\t remove {task} \t\t\t removes task and all sessions for that task"
 
 handleInput :: [String] -> TrackerMonad ()
 handleInput args = do
