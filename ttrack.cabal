@@ -1,7 +1,7 @@
 Name: ttrack
 Version: 0.2.0
 Build-type: Simple
-Build-Depends: HaXml, HDBC, HDBC-sqlite3, base, filepath, old-locale, old-time, network, mtl, MissingH, directory, time
+Build-Depends: HaXml, HDBC, HDBC-sqlite3, base, filepath, old-locale, old-time, network, mtl, MissingH, directory, time, parsec
 
 Executable: ttrack
 Main-Is: TTrack/Main.hs

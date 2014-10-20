@@ -5,6 +5,7 @@ module Main where
 import TTrack.DB
 import TTrack.Types
 import TTrack.Utils
+import TTrack.TimeUtils
 import System.Directory
 import System.FilePath
 import Control.Monad
@@ -208,7 +209,7 @@ end = do
             inputDuration sess = do
                 tellUsr "Please input duration in format [hm]s e.g. 1h30m10s"
                 durString <- liftIO getLine
-                let durDiffTime = parseDuration durString
+                let durDiffTime = parseDurationToDiffTime durString
                 case durDiffTime of
                     Just d -> do
                         newSess <- setSessDuration sess d
