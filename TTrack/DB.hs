@@ -1,6 +1,7 @@
-module TimeTrackerDB where
-import TimeTrackerTypes
-import TimeTrackerUtils
+module TTrack.DB where
+
+import TTrack.Types
+import TTrack.Utils
 import Database.HDBC
 import Database.HDBC.Sqlite3
 import Control.Monad (when)

@@ -1,4 +1,5 @@
-module TimeTrackerTypes where
+module TTrack.Types where
+
 import Database.HDBC
 import Database.HDBC.Sqlite3
 import Control.Monad

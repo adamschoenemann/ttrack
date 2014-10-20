@@ -1,8 +1,8 @@
 {-# LANGUAGE FlexibleInstances #-}
 
-module TimeTrackerUtils where
+module TTrack.Utils where
 
-import TimeTrackerTypes
+import TTrack.Types
 import Data.Time
 import Data.Char
 import Data.Monoid

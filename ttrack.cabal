@@ -1,8 +1,8 @@
-Name: hs-ttrack
-Version: 1.0.0
+Name: ttrack
+Version: 0.2.0
 Build-type: Simple
 Build-Depends: HaXml, HDBC, HDBC-sqlite3, base, filepath, old-locale, old-time, network, mtl, MissingH, directory, time
 
 Executable: ttrack
-Main-Is: TimeTrackerMain.hs
+Main-Is: TTrack/Main.hs
 GHC-Options: -O2

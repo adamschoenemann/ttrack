@@ -2,9 +2,9 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 module Main where
 
-import TimeTrackerDB
-import TimeTrackerTypes
-import TimeTrackerUtils
+import TTrack.DB
+import TTrack.Types
+import TTrack.Utils
 import System.Directory
 import System.FilePath
 import Control.Monad
