@@ -40,7 +40,7 @@ syntaxError = "Usage: ttrack command\n\
               \commands:\n\
               \\t create {task}\t\t\t creates a new task\n\
               \\t start {task}\t\t\t starts tracking task\n\
-              \\t end \t\t\t\t stops tracking current task\n\
+              \\t stop \t\t\t\t stops tracking current task\n\
               \\t current \t\t\t get current task in progress\n\
               \\t duration \t\t\t print duration of current session\n\
               \\t report {task} \t\t\t print a list of sessions for the task\n\
@@ -61,8 +61,8 @@ handleInput args = do
             task <- current
             tell ["Current task is " ++ taskName task]
             return ()
-        ["end"] -> do
-            sess <- end
+        ["stop"] -> do
+            sess <- stop
             tell ["Session duration was " ++ (readSeconds . round . fromJust $ sessDuration sess)]
             return ()
         ["list"] -> do
@@ -75,10 +75,7 @@ handleInput args = do
                  ++ ". Session duration: " ++ (readSeconds $ round d)]
             return ()
         ["report", n] -> do
-            task <- getTaskByName n
-            sessions <- getTaskSessions task
-            mapM (\x -> tell [showSess x]) sessions
-            return ()
+        	report n
         ["remove", n] -> do
             remove n
             return ()
@@ -190,8 +187,8 @@ current = do
 
 
 
-end :: TrackerMonad Session
-end = do
+stop :: TrackerMonad Session
+stop = do
     lastSess <- getLastSession
     endSess <- endSession lastSess
     let (Just dur) = sessDuration endSess
@@ -219,7 +216,12 @@ end = do
                         inputDuration sess
             tellUsr = liftIO . putStrLn
 
-
+report :: String -> TrackerMonad ()
+report n = do
+    task <- getTaskByName n
+    sessions <- getTaskSessions task
+    mapM (\x -> tell [showSess x]) sessions
+    return ()
 
 
 list :: TrackerMonad [Task]
