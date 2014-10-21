@@ -1,4 +1,7 @@
-module TTrack.Types where
+module TTrack.Types
+	( module TTrack.Types
+	, tell
+	) where
 
 import Database.HDBC
 import Database.HDBC.Sqlite3
@@ -11,6 +14,7 @@ import Data.Time
 import System.Locale
 import System.Time.Utils (renderSecs)
 import Data.Monoid
+import Control.Applicative ((<$>))
 
 data Task = Task {
      taskId :: Integer
@@ -59,6 +63,13 @@ sessDuration sess = case end of
     where
         end = sessEnd sess
         startTime = sessStart sess
+
+
+sessStartZoned :: Session -> TimeZone -> ZonedTime
+sessStartZoned s tz = utcToZonedTime tz $ sessStart s
+
+sessEndZoned :: Session -> TimeZone -> Maybe ZonedTime
+sessEndZoned s tz = utcToZonedTime tz <$> sessEnd s
 
 sessDurationIO :: Session -> IO NominalDiffTime
 sessDurationIO sess = do
