@@ -1,5 +1,6 @@
 module TTrack.TimeUtils
     ( parseDurationToDiffTime
+    , parseDurationToSeconds
     , readSeconds
     ) where
 
@@ -37,10 +38,14 @@ parseDurationToTimeUnits = (,,) <$> optionMaybe (try parseHours)
                                 <*> optionMaybe (try parseMinutes)
                                 <*> optionMaybe (try parseSeconds)
 
-parseDurationToDiffTime :: String -> Maybe NominalDiffTime
-parseDurationToDiffTime s = case (parse parseDurationToTimeUnits "none" s) of
-                                    Right x -> Just $ ((fromInteger $ timeUnitsToSeconds x) :: NominalDiffTime)
+parseDurationToSeconds :: String -> Maybe Integer
+parseDurationToSeconds s = case (parse parseDurationToTimeUnits "none" s) of
+                                    Right (Nothing,Nothing,Nothing) -> Nothing
                                     Left err -> Nothing
+                                    Right x -> Just $ timeUnitsToSeconds x
+
+parseDurationToDiffTime :: String -> Maybe NominalDiffTime
+parseDurationToDiffTime s = (\x -> fromInteger x :: NominalDiffTime) <$> parseDurationToSeconds s
 
 -- Display duration from seconds
 divRemaind :: Integer -> Integer -> (Integer, Integer)
@@ -55,7 +60,9 @@ minutes :: Integer -> (Integer, Integer)
 minutes a = a `divRemaind` 60
 
 readSeconds :: Integer -> String
-readSeconds s = let (h, s') = hours s
-                    (m, s'') = minutes s'
-                    format x c = if x > 0 then (show x) ++ c else ""
-                in (format h "h") ++ (format m "m") ++ format s'' "s"
+readSeconds s
+            | s < 0 = error "readSeconds does not take negative values"
+            | otherwise = let (h, s') = hours s
+                              (m, s'') = minutes s'
+                              format x c = if x > 0 then (show x) ++ [c] else ""
+                          in  concatMap (\(x,c) -> format x c) $ zip [h,m,s''] "hms"

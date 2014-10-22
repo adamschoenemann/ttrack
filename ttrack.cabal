@@ -1,8 +1,21 @@
-Name: ttrack
-Version: 0.2.1
-Build-type: Simple
-Build-Depends: HaXml, HDBC, HDBC-sqlite3, base, filepath, old-locale, old-time, network, mtl, MissingH, directory, time, parsec
+name: ttrack
+version: 0.2.1
+build-type: Simple
+cabal-version: >=1.8
 
-Executable: ttrack
-Main-Is: TTrack/Main.hs
-GHC-Options: -O2
+executable ttrack
+    main-is: Main.hs
+    hs-source-dirs: src
+    ghc-options: -O2
+    build-depends: base, HaXml, HDBC, HDBC-sqlite3, filepath, old-locale, old-time, network, mtl, MissingH, directory, time, parsec
+
+test-suite test-ttrack
+    main-is: Spec.hs
+    hs-source-dirs: test, src
+    build-depends: base, hspec, ttrack, QuickCheck, time, parsec, old-locale, mtl
+    type: exitcode-stdio-1.0
+
+library
+    build-depends: base, HaXml, HDBC, HDBC-sqlite3, filepath, old-locale, old-time, network, mtl, MissingH, directory, time, parsec, old-locale
+    exposed-modules: TTrack.CLI, TTrack.TimeUtils, TTrack.Commands, TTrack.DB, TTrack.Types, TTrack.DateParsing
+    hs-source-dirs: src

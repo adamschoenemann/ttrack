@@ -113,9 +113,3 @@ utcToISO :: UTCTime -> String
 utcToISO t = let tc = defaultTimeLocale
              in  formatTime tc "%F %T" t
 
-showSess :: Session -> TimeZone -> String
-showSess s tz = (show $ sessStartZoned s tz) ++ " | " ++ (showEnd s) ++ " | " ++
-          		(show $ readSeconds $ round $ fromJust $ sessDuration s)
-        			where showEnd s = case (sessEndZoned s tz) of
-				                            Nothing -> "Unended"
-				                            Just end -> show end

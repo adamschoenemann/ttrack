@@ -1,8 +1,9 @@
 module TTrack.Types
-	( module TTrack.Types
-	, tell
-	) where
+    ( module TTrack.Types
+    , tell
+    ) where
 
+import TTrack.TimeUtils (readSeconds)
 import Database.HDBC
 import Database.HDBC.Sqlite3
 import Control.Monad
@@ -14,6 +15,7 @@ import Data.Time
 import System.Locale
 import System.Time.Utils (renderSecs)
 import Data.Monoid
+import Data.Maybe (fromJust)
 import Control.Applicative ((<$>))
 
 data Task = Task {
@@ -64,6 +66,16 @@ sessDuration sess = case end of
         end = sessEnd sess
         startTime = sessStart sess
 
+showSess :: Session -> TimeZone -> String
+showSess s tz = (showStart s) ++ " | " ++ (showEnd s) ++ " | " ++
+                (show $ readSeconds $ round $ fromJust $ sessDuration s)
+                    where
+                        format = "%F %T %z"
+                        dtl = defaultTimeLocale
+                        showEnd s = case (sessEndZoned s tz) of
+                                            Nothing -> "Unended"
+                                            Just end -> formatTime dtl format $ end
+                        showStart s = formatTime dtl format $ sessStartZoned s tz
 
 sessStartZoned :: Session -> TimeZone -> ZonedTime
 sessStartZoned s tz = utcToZonedTime tz $ sessStart s
@@ -89,8 +101,8 @@ sessFromSql [id, _, start, end] task = Session (fromSql id) task (fromSql start)
 
 sessToSql :: Session -> [SqlValue]
 sessToSql sess = [toSql $ taskId $ sessTask sess
-					,toSql $ sessStart sess
-					,toSql $ sessEnd sess]
+                    ,toSql $ sessStart sess
+                    ,toSql $ sessEnd sess]
 
 type TrackerMonad a = WriterT [String] (ReaderT Connection (ErrorT TTError IO)) a
 
