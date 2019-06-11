@@ -5,7 +5,7 @@ You issue a command before you start your task, and when you are done, you issue
 
 # Usage
 Usage: ttrack command
-
+```
 commands:
          create [task]                   creates a new task
          start [task]                    starts tracking task
@@ -16,6 +16,7 @@ commands:
          list                            lists all tasks
          time [task]                     print time spent on task
          remove [task]                   removes task and all sessions for that task
+```
 
 # Install
 - clone the repository
