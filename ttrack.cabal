@@ -1,21 +1,107 @@
-name: ttrack
-version: 0.2.1
-build-type: Simple
-cabal-version: >=1.8
+cabal-version: 1.12
 
-executable ttrack
-    main-is: Main.hs
-    hs-source-dirs: src
-    ghc-options: -O2
-    build-depends: base, HaXml, HDBC, HDBC-sqlite3, filepath, old-locale, old-time, network, mtl, MissingH, directory, time, parsec
+-- This file has been generated from package.yaml by hpack version 0.31.1.
+--
+-- see: https://github.com/sol/hpack
+--
+-- hash: 254261d35a450e53ed6fc11606581b15017b6122befc438144127255f5cc72ef
 
-test-suite test-ttrack
-    main-is: Spec.hs
-    hs-source-dirs: test, src
-    build-depends: base, hspec, ttrack, QuickCheck, time, parsec, old-locale, mtl
-    type: exitcode-stdio-1.0
+name:           ttrack
+version:        0.2.1
+license:        UnspecifiedLicense
+build-type:     Simple
 
 library
-    build-depends: base, HaXml, HDBC, HDBC-sqlite3, filepath, old-locale, old-time, network, mtl, MissingH, directory, time, parsec, old-locale
-    exposed-modules: TTrack.CLI, TTrack.TimeUtils, TTrack.Commands, TTrack.DB, TTrack.Types, TTrack.DateParsing
-    hs-source-dirs: src
+  exposed-modules:
+      TTrack.CLI
+      TTrack.TimeUtils
+      TTrack.Commands
+      TTrack.DB
+      TTrack.Types
+      TTrack.DateParsing
+  other-modules:
+      Main
+      TTrack.Config
+      TTrack.Tests
+      TTrack.Utils
+      Paths_ttrack
+  hs-source-dirs:
+      src
+  build-depends:
+      HDBC
+    , HDBC-sqlite3
+    , HaXml
+    , MissingH
+    , base
+    , directory
+    , filepath
+    , mtl
+    , network
+    , old-locale
+    , old-time
+    , parsec
+    , time
+  default-language: Haskell2010
+
+executable ttrack
+  main-is: Main.hs
+  other-modules:
+      TTrack.CLI
+      TTrack.Commands
+      TTrack.Config
+      TTrack.DateParsing
+      TTrack.DB
+      TTrack.Tests
+      TTrack.TimeUtils
+      TTrack.Types
+      TTrack.Utils
+      Paths_ttrack
+  hs-source-dirs:
+      src
+  ghc-options: -O2
+  build-depends:
+      HDBC
+    , HDBC-sqlite3
+    , HaXml
+    , MissingH
+    , base
+    , directory
+    , filepath
+    , mtl
+    , network
+    , old-locale
+    , old-time
+    , parsec
+    , time
+  default-language: Haskell2010
+
+test-suite test-ttrack
+  type: exitcode-stdio-1.0
+  main-is: Spec.hs
+  other-modules:
+      TTrack.DateParsingSpec
+      TTrack.TimeUtilsSpec
+      Main
+      TTrack.CLI
+      TTrack.Commands
+      TTrack.Config
+      TTrack.DateParsing
+      TTrack.DB
+      TTrack.Tests
+      TTrack.TimeUtils
+      TTrack.Types
+      TTrack.Utils
+      Paths_ttrack
+  hs-source-dirs:
+      test
+      src
+  build-depends:
+      QuickCheck
+    , base
+    , hspec
+    , mtl
+    , old-locale
+    , parsec
+    , time
+    , ttrack
+  default-language: Haskell2010

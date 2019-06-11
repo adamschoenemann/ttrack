@@ -1,0 +1,52 @@
+name: ttrack
+version: '0.2.1'
+license: UnspecifiedLicense
+dependencies:
+- base
+- old-locale
+- mtl
+- time
+- parsec
+- old-locale
+library:
+  source-dirs: src
+  exposed-modules:
+  - TTrack.CLI
+  - TTrack.TimeUtils
+  - TTrack.Commands
+  - TTrack.DB
+  - TTrack.Types
+  - TTrack.DateParsing
+  dependencies:
+  - HaXml
+  - HDBC
+  - HDBC-sqlite3
+  - filepath
+  - old-time
+  - network
+  - MissingH
+  - directory
+executables:
+  ttrack:
+    main: Main.hs
+    source-dirs: src
+    ghc-options: -O2
+    dependencies:
+    - HaXml
+    - HDBC
+    - HDBC-sqlite3
+    - filepath
+    - old-time
+    - network
+    - MissingH
+    - directory
+tests:
+  test-ttrack:
+    main: Spec.hs
+    source-dirs:
+    - test
+    - src
+    dependencies:
+    - hspec
+    - ttrack
+    - QuickCheck

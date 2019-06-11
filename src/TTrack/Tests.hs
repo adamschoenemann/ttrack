@@ -1,14 +1,15 @@
 {-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE FlexibleContexts #-}
 
-module Main where
+module TTrack.Tests where
 
-import TimeTrackerTypes
+import TTrack.Types
 import Data.Time
 import Data.Char
 import Data.Monoid
 import Control.Monad
 import Control.Monad.Error
-import System.Locale
+import System.Locale hiding (defaultTimeLocale)
 import Control.Monad.Identity
 
 
@@ -99,13 +100,14 @@ test = do
 	--tf <- return $ lift . lift $ parseTimeFormat "20:33:31"
 	return ()
 
-parseTimeFormat :: String ->
-parseTimeFormat time = let splits = split (trim time) ':'
-                 in case splits of
-                    [h] -> return "%H"
-                    [h,m] -> return "%R"
-                    [h,m,s] -> return "%T"
-                    _ -> throwError $ OtherError $ "Invalid time format " ++ time
+parseTimeFormat :: MonadError TTError m => String -> m String
+parseTimeFormat time =
+    let splits = split (trim time) ':'
+    in  case splits of
+        [h] -> return "%H"
+        [h,m] -> return "%R"
+        [h,m,s] -> return "%T"
+        _ -> throwError $ OtherError $ "Invalid time format " ++ time
 
 split :: String -> Char -> [String]
 split [] _ = []

@@ -12,7 +12,7 @@ import Control.Monad.Writer
 import Control.Monad.Reader
 import Control.Monad.Error
 import Data.Time
-import System.Locale
+import System.Locale hiding (defaultTimeLocale)
 import System.Time.Utils (renderSecs)
 import Data.Monoid
 import Data.Maybe (fromJust)
