@@ -2,16 +2,15 @@
 
 module TTrack.Utils where
 
-import TTrack.Types
-import TTrack.TimeUtils
-import Data.Time
-import Data.Char
-import Data.Monoid
-import Data.Maybe
-import Control.Monad
-import Control.Monad.Error
-import System.Locale hiding (defaultTimeLocale)
-
+import           TTrack.Types
+import           TTrack.TimeUtils
+import           Data.Time
+import           Data.Char
+import           Data.Monoid
+import           Data.Maybe
+import           Control.Monad
+import           Control.Monad.Error
+import           System.Locale hiding (defaultTimeLocale)
 
 -- Parses a duration of format hms e.g. 1h30m10s
 --parseDuration :: String -> Maybe NominalDiffTime
@@ -31,85 +30,91 @@ import System.Locale hiding (defaultTimeLocale)
 --          parseSep 's' = 1
 --          parseSep 'm' = 60
 --          parseSep 'h' = 60 * 60
-
-
-
-
 split :: String -> Char -> [String]
 split [] _ = []
 split str del = foldr fun [[]] str
-    where fun x [[]] = [[x]]
-          fun x (y:ys)
-                | x == del = []:(trim y):ys
-                | otherwise = (x:y):ys
-
+  where
+    fun x [[]] = [[x]]
+    fun x (y:ys)
+      | x == del = []:(trim y):ys
+      | otherwise = (x:y):ys
 
 trim :: String -> String
 trim = trim' . reverse . trim' . reverse
-    where trim' s = dropWhile isSpace s
-          isSpace x = x == ' '
+  where
+    trim' s = dropWhile isSpace s
 
--- Make Either ErrorT a an instance of monoid for concatenation.
--- WITH short-circuiting
+    isSpace x = x == ' '
+
+ -- Make Either ErrorT a an instance of monoid for concatenation.
+ -- WITH short-circuiting
 instance (Monoid a) => Monoid (Either TTError a) where
-    mempty = (Right mempty)
-    mappend (Left x) _ = (Left x)
-    mappend _ (Left x) = (Left x)
-    mappend (Right a) (Right b) = (Right (a `mappend` b))
+  mempty = (Right mempty)
+
+  mappend (Left x) _ = (Left x)
+  mappend _ (Left x) = (Left x)
+  mappend (Right a) (Right b) = (Right (a `mappend` b))
 
 renderDuration :: NominalDiffTime -> String
 renderDuration = readSeconds . round
 
 parseISO :: String -> TrackerMonad UTCTime
 parseISO str = do
-    format <- formatFromDateString str
-    let time = parseTime defaultTimeLocale format str
-    case time of
-        Nothing -> throwError $ OtherError $ "Timeformat '" ++
-                    format ++ "'' parsed from date string '" ++ str ++ "' is invalid"
-        Just t -> return t
-
-
+  format <- formatFromDateString str
+  let time = parseTime defaultTimeLocale format str
+  case time of
+    Nothing -> throwError
+      $ OtherError
+      $ "Timeformat '"
+      ++ format
+      ++ "'' parsed from date string '"
+      ++ str
+      ++ "' is invalid"
+    Just t  -> return t
 
 -- Takes a date string in (partial) ISO format and returns a format string
 -- E.g 2014-09-15 16:03:01
 formatFromDateString :: String -> TrackerMonad String
 formatFromDateString date =
-    let splits = split (trim date) ' '
-    in  case splits of
-        [day] -> parseDayFormat day
-        [day, time] -> do
-            df <- parseDayFormat day
-            tf <- parseTimeFormat time
-            return $ df ++ " " ++ tf
+  let splits = split (trim date) ' '
+  in case splits of
+       [day]       -> parseDayFormat day
+       [day, time] -> do
+         df <- parseDayFormat day
+         tf <- parseTimeFormat time
+         return $ df ++ " " ++ tf
 
 parseDayFormat :: String -> TrackerMonad String
-parseDayFormat day = let splits = split (trim day) '-'
-               in case splits of
-                   [] -> throwError $ OtherError "At least a year must be supplied"
-                   [y] -> return "%Y"
-                   [y,m] -> return "%Y-%m"
-                   [y,m,d] -> return "%F"
+parseDayFormat day =
+  let splits = split (trim day) '-'
+  in case splits of
+       []        -> throwError $ OtherError "At least a year must be supplied"
+       [y]       -> return "%Y"
+       [y, m]    -> return "%Y-%m"
+       [y, m, d] -> return "%F"
 
 parseTimeFormat :: String -> TrackerMonad String
-parseTimeFormat time = let splits = split (trim time) ':'
-                 in case splits of
-                    [h] -> return "%H"
-                    [h,m] -> return "%R"
-                    [h,m,s] -> return "%T"
-                    _ -> throwError $ OtherError $ "Invalid format " ++ time ++ " was supplied"
+parseTimeFormat time =
+  let splits = split (trim time) ':'
+  in case splits of
+       [h]       -> return "%H"
+       [h, m]    -> return "%R"
+       [h, m, s] -> return "%T"
+       _         -> throwError
+         $ OtherError
+         $ "Invalid format " ++ time ++ " was supplied"
 
 parseTimeInput :: String -> TrackerMonad UTCTime
 parseTimeInput "now" = liftIO $ getCurrentTime
 parseTimeInput "yesterday" = do
-    now <- liftIO getCurrentTime
-    return $ UTCTime (addDays (-1) $ utctDay now) 0
+  now <- liftIO getCurrentTime
+  return $ UTCTime (addDays (-1) $ utctDay now) 0
 parseTimeInput "today" = do
-    now <- liftIO getCurrentTime
-    parseISO $ show $ utctDay now
+  now <- liftIO getCurrentTime
+  parseISO $ show $ utctDay now
 parseTimeInput i = parseISO i
 
 utcToISO :: UTCTime -> String
 utcToISO t = let tc = defaultTimeLocale
-             in  formatTime tc "%F %T" t
+             in formatTime tc "%F %T" t
 

@@ -1,55 +1,61 @@
 module TTrack.CLI where
 
-import TTrack.Commands
-import TTrack.Types
-import TTrack.TimeUtils
-import Data.Maybe (fromJust)
+import           TTrack.Commands
+import           TTrack.Types
+import           TTrack.TimeUtils
+import           Data.Maybe (fromJust)
 
 handleInput :: [String] -> TrackerMonad ()
 handleInput args = do
-    case args of
-        ["create", n] -> do
-            create n
-            return ()
-        ["start", n] -> do
-            start n
-            return ()
-        ["current"] -> do
-            task <- current
-            tell ["Current task is " ++ taskName task]
-            return ()
-        ["stop"] -> do
-            sess <- stop
-            tell ["Session duration was " ++ (readSeconds . round . fromJust $ sessDuration sess)]
-            return ()
-        ["list"] -> do
-            list
-            return ()
-        ["duration"] -> do
-            d <- duration
-            task <- current
-            tell ["Current session is with task: " ++ taskName task
-                 ++ ". Session duration: " ++ (readSeconds $ round d)]
-            return ()
-        ["report", n] -> do
-        	report n
-        ["remove", n] -> do
-            remove n
-            return ()
-        ["time", n] -> do
-            t <- time n
-            tell $ ["Time spent on task " ++ n ++ " is " ++ (readSeconds $ round t)]
-            return ()
-        ["time", n, from, to] -> do
-            time <- timeInInterval n from to
-            tell ["Time spent on task: " ++ n ++ ": " ++ readSeconds (round time)]
-            return ()
-        _ -> do
-            tell [syntaxError]
-            return ()
+  case args of
+    ["create", n] -> do
+      create n
+      return ()
+    ["start", n] -> do
+      start n
+      return ()
+    ["current"] -> do
+      task <- current
+      tell ["Current task is " ++ taskName task]
+      return ()
+    ["stop"] -> do
+      sess <- stop
+      tell
+        [ "Session duration was "
+            ++ (readSeconds . round . fromJust $ sessDuration sess)]
+      return ()
+    ["list"] -> do
+      list
+      return ()
+    ["duration"] -> do
+      d <- duration
+      task <- current
+      tell
+        [ "Current session is with task: "
+            ++ taskName task
+            ++ ". Session duration: "
+            ++ (readSeconds $ round d)]
+      return ()
+    ["report", n] -> do
+      report n
+    ["remove", n] -> do
+      remove n
+      return ()
+    ["time", n] -> do
+      t <- time n
+      tell $ ["Time spent on task " ++ n ++ " is " ++ (readSeconds $ round t)]
+      return ()
+    ["time", n, from, to] -> do
+      time <- timeInInterval n from to
+      tell ["Time spent on task: " ++ n ++ ": " ++ readSeconds (round time)]
+      return ()
+    _ -> do
+      tell [syntaxError]
+      return ()
 
 syntaxError :: String
-syntaxError = "Usage: ttrack command\n\
+syntaxError =
+  "Usage: ttrack command\n\
               \\n\
               \commands:\n\
               \\t create {task}\t\t\t creates a new task\n\
