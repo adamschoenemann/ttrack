@@ -1,0 +1,2 @@
+:set prompt "ttrack> "
+:def rr (\a -> return $ unlines [":r", a])
