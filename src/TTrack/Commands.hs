@@ -31,8 +31,8 @@ create name = do
       tell $ ["Created task: " ++ name]
       return task
 
-start :: String -> TrackerMonad Session
-start name = do
+start :: String -> Maybe String -> TrackerMonad Session
+start name mbegin = do
   t <- getTaskByName name
   last <- getLastSession
   if not (isEnded last)
@@ -41,13 +41,13 @@ start name = do
       $ "Can't start a new session when session "
       ++ (taskName . sessTask $ last)
       ++ " is already open. Please close it first"
-    else startSession' t
+    else startSession' t mbegin
   `catchError` errorHandler
   where
     errorHandler (NoTaskFound msg) = createNew
     errorHandler (NoLastSession msg) = do
       t <- getTaskByName name
-      startSession' t
+      startSession' t mbegin
     errorHandler e = throwError e
 
     createNew = do
@@ -58,13 +58,16 @@ start name = do
       if (map toLower resp == "y")
         then do
           create name
-          start name
+          start name mbegin
         else do
           throwError $ OtherError $ "No action taken"
 
-    startSession' t = do
-      s <- startSession t
-      tell ["Started tracking " ++ name]
+    startSession' :: Task -> Maybe String -> TrackerMonad Session
+    startSession' t mbegin = do
+      mbeginUtc <- maybe (pure Nothing) ((Just <$>) . parseTimeInput) mbegin
+      s <- startSession t mbeginUtc
+      let from = maybe "" (\b -> " from " ++ show b) mbeginUtc
+      tell ["Started tracking " ++ name ++ from]
       return s
 
 current :: TrackerMonad Task

@@ -12,7 +12,10 @@ handleInput args = do
       create n
       return ()
     ["start", n] -> do
-      start n
+      start n Nothing
+      return ()
+    ["start", n, b] -> do
+      start n (Just b)
       return ()
     ["current"] -> do
       task <- current
@@ -59,7 +62,7 @@ syntaxError =
               \\n\
               \commands:\n\
               \\t create {task}\t\t\t creates a new task\n\
-              \\t start {task}\t\t\t starts tracking task\n\
+              \\t start {task} [begin] \t\t starts tracking task from now or [begin]\n\
               \\t stop \t\t\t\t stops tracking current task\n\
               \\t current \t\t\t get current task in progress\n\
               \\t duration \t\t\t print duration of current session\n\

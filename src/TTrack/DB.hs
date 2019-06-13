@@ -64,10 +64,10 @@ createTask name = do
       $ TaskAlreadyExists
       $ "A task with name " ++ name ++ " already exists."
 
-startSession :: Task -> TrackerMonad Session
-startSession task = do
+startSession :: Task -> Maybe UTCTime -> TrackerMonad Session
+startSession task mstart = do
   dbh <- ask
-  start <- liftIO getCurrentTime
+  start <- maybe (liftIO getCurrentTime) pure mstart
   liftIO
     $ run
       dbh
