@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 254261d35a450e53ed6fc11606581b15017b6122befc438144127255f5cc72ef
+-- hash: 7b1160e8be702f342d2e4b8892ee3ced3330c0647c24aae32b7ef3f3985bae5f
 
 name:           ttrack
 version:        0.2.1
@@ -30,7 +30,6 @@ library
   build-depends:
       HDBC
     , HDBC-sqlite3
-    , HaXml
     , MissingH
     , base
     , directory
@@ -62,7 +61,6 @@ executable ttrack
   build-depends:
       HDBC
     , HDBC-sqlite3
-    , HaXml
     , MissingH
     , base
     , directory

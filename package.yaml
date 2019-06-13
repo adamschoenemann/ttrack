@@ -18,7 +18,6 @@ library:
   - TTrack.Types
   - TTrack.DateParsing
   dependencies:
-  - HaXml
   - HDBC
   - HDBC-sqlite3
   - filepath
@@ -32,7 +31,6 @@ executables:
     source-dirs: src
     ghc-options: -O2
     dependencies:
-    - HaXml
     - HDBC
     - HDBC-sqlite3
     - filepath
