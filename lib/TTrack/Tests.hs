@@ -70,7 +70,7 @@ renderDuration = readSeconds . round
 parseISO :: String -> Either TTError UTCTime
 parseISO str = do
   format <- formatFromDateString str
-  let time = parseTime defaultTimeLocale format str
+  let time = parseTimeM True defaultTimeLocale format str
   case time of
     Nothing -> Left
       $ OtherError

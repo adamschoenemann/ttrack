@@ -61,7 +61,7 @@ renderDuration = readSeconds . round
 parseISO :: String -> TrackerMonad UTCTime
 parseISO str = do
   format <- formatFromDateString str
-  let time = parseTime defaultTimeLocale format str
+  let time = parseTimeM True defaultTimeLocale format str
   case time of
     Nothing -> throwError
       $ OtherError

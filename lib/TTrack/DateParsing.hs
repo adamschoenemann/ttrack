@@ -6,4 +6,4 @@ import           Control.Applicative ((<$>))
 
 parseDateWithContext :: UTCTime -> String -> Maybe Day
 parseDateWithContext context fullFormat =
-  utctDay <$> parseTime defaultTimeLocale "%F" fullFormat
+  utctDay <$> parseTimeM True defaultTimeLocale "%F" fullFormat
