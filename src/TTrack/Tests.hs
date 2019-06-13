@@ -8,7 +8,7 @@ import           Data.Time
 import           Data.Char
 import           Data.Monoid
 import           Control.Monad
-import           Control.Monad.Error
+import           Control.Monad.Except
 import           System.Locale hiding (defaultTimeLocale)
 import           Control.Monad.Identity
 

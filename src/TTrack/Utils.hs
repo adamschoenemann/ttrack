@@ -9,7 +9,7 @@ import           Data.Char
 import           Data.Monoid
 import           Data.Maybe
 import           Control.Monad
-import           Control.Monad.Error
+import           Control.Monad.Except
 import           System.Locale hiding (defaultTimeLocale)
 
 -- Parses a duration of format hms e.g. 1h30m10s

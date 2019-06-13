@@ -6,7 +6,7 @@ import           TTrack.Utils
 import           TTrack.TimeUtils
 import           TTrack.Config
 import           System.Directory (doesFileExist, removeFile)
-import           Control.Monad.Error
+import           Control.Monad.Except
 import           Data.Time
 import           Data.Maybe (fromJust)
 import           System.Locale

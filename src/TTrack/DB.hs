@@ -7,7 +7,7 @@ import           Database.HDBC.Sqlite3
 import           Control.Monad (when)
 import           Control.Exception
 import           Control.Monad.Reader
-import           Control.Monad.Error
+import           Control.Monad.Except
 import           Prelude hiding (handle)
 import           Data.Time
 import           System.Locale
