@@ -9,14 +9,7 @@ dependencies:
 - parsec
 - old-locale
 library:
-  source-dirs: src
-  exposed-modules:
-  - TTrack.CLI
-  - TTrack.TimeUtils
-  - TTrack.Commands
-  - TTrack.DB
-  - TTrack.Types
-  - TTrack.DateParsing
+  source-dirs: lib
   dependencies:
   - HDBC
   - HDBC-sqlite3
@@ -28,9 +21,10 @@ library:
 executables:
   ttrack:
     main: Main.hs
-    source-dirs: src
+    source-dirs: app
     ghc-options: -O2
     dependencies:
+    - ttrack
     - HDBC
     - HDBC-sqlite3
     - filepath
@@ -43,7 +37,7 @@ tests:
     main: Spec.hs
     source-dirs:
     - test
-    - src
+    - lib
     dependencies:
     - hspec
     - ttrack
