@@ -3,7 +3,7 @@ module TTrack.CLI where
 import           TTrack.Commands
 import           TTrack.Types
 import           TTrack.TimeUtils
-import           Data.Maybe (fromJust)
+import           Data.Maybe.Extras (fromJustMsg)
 
 handleInput :: [String] -> TrackerMonad ()
 handleInput args = do
@@ -25,7 +25,7 @@ handleInput args = do
       sess <- stop
       tell
         [ "Session duration was "
-            ++ (readSeconds . round . fromJust $ sessDuration sess)]
+            ++ (readSeconds . round . fromJustMsg "sessDuration sess" $ sessDuration sess)]
       return ()
     ["list"] -> do
       list

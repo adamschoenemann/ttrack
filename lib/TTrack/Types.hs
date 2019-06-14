@@ -7,7 +7,6 @@ import Control.Monad.Reader
 import Control.Monad.Trans
 import Control.Monad.Writer
 
-import Data.Maybe (fromJust)
 import Data.Monoid
 import Data.Time
 
@@ -18,6 +17,7 @@ import System.Locale hiding (defaultTimeLocale)
 import System.Time.Utils (renderSecs)
 
 import TTrack.TimeUtils (readSeconds)
+import Data.Maybe.Extras (fromJustMsg)
 
 data Task =
   Task
@@ -74,15 +74,15 @@ showSess s tz =
   ++ " | "
   ++ (showEnd s)
   ++ " | "
-  ++ (show $ readSeconds $ round $ fromJust $ sessDuration s)
+  ++ (maybe "in progress" (readSeconds . round) $ sessDuration s)
   where
-    format = "%F %T %z"
+    format = "%FT%T%z"
 
     dtl = defaultTimeLocale
 
     showEnd s =
       case (sessEndZoned s tz) of
-        Nothing -> "Unended"
+        Nothing -> "Unended                 "
         Just end -> formatTime dtl format $ end
 
     showStart s = formatTime dtl format $ sessStartZoned s tz

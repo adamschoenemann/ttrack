@@ -117,4 +117,3 @@ parseTimeInput i = parseISO i
 utcToISO :: UTCTime -> String
 utcToISO t = let tc = defaultTimeLocale
              in formatTime tc "%F %T" t
-

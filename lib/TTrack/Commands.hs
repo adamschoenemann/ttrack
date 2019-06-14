@@ -8,7 +8,7 @@ import           TTrack.Config
 import           System.Directory (doesFileExist, removeFile)
 import           Control.Monad.Except
 import           Data.Time
-import           Data.Maybe (fromJust)
+import           Data.Maybe.Extras (fromJustMsg)
 import           System.Locale
 import           Data.Char (toUpper, toLower)
 
@@ -144,7 +144,7 @@ timeInInterval name from to = do
   tos <- parseTimeInput to
   t <- getTaskByName name
   ss <- getTaskSessionsInInterval t froms tos
-  let time = sum $ map (toInteger . round . fromJust . sessDuration) ss
+  let time = sum $ map (toInteger . round . fromJustMsg "timeInInterval" . sessDuration) ss
   return $ (fromInteger time :: NominalDiffTime)
 
 time :: String -> TrackerMonad NominalDiffTime

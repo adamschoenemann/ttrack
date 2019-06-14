@@ -3,7 +3,7 @@ module TTrack.DateParsingSpec where
 import Test.Hspec
 import Data.Time
 import System.Locale
-import Data.Maybe (fromJust)
+import           Data.Maybe.Extras (fromJustMsg)
 import TTrack.DateParsing
 import Control.Monad.Trans
 
@@ -19,4 +19,4 @@ spec = do
 				parseDateWithContext now "09-22" `shouldBe`
 					(Just $ fromGregorian year 09 22)
 
-oct22nd2014 = utctDay $ fromJust $ parseTimeM True defaultTimeLocale "%F" "2014-10-22"
+oct22nd2014 = utctDay $ fromJustMsg "oct22nd2014" $ parseTimeM True defaultTimeLocale "%F" "2014-10-22"
