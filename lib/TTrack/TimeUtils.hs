@@ -46,7 +46,7 @@ parseDurationToTimeUnits = (,,) <$> optionMaybe (try parseHours)
   <*> optionMaybe (try parseSeconds)
 
 parseDurationToSeconds :: String -> Maybe Integer
-parseDurationToSeconds s = case (parse parseDurationToTimeUnits "none" s) of
+parseDurationToSeconds s = case parse parseDurationToTimeUnits "none" s of
   Right (Nothing, Nothing, Nothing) -> Nothing
   Left err -> Nothing
   Right x -> Just $ timeUnitsToSeconds x
@@ -76,6 +76,6 @@ readSeconds s
         (m, s'') = minutes s'
         format x c =
           if x > 0
-          then (show x) ++ [c]
+          then show x ++ [c]
           else ""
-    in concatMap (\(x, c) -> format x c) $ zip [h, m, s''] "hms"
+    in concatMap (uncurry format) $ zip [h, m, s''] "hms"
