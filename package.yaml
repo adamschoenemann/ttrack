@@ -25,9 +25,7 @@ executables:
     - HDBC
     - HDBC-sqlite3
     - filepath
-    - old-time
     - network
-    - MissingH
     - directory
 tests:
   test-ttrack:
