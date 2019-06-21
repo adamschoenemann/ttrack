@@ -37,3 +37,4 @@ tests:
     - ttrack
     - QuickCheck
     - time
+    - mtl
