@@ -74,3 +74,23 @@ parseTimeInput i = parseISO i
 utcToISO :: UTCTime -> String
 utcToISO t = let tc = defaultTimeLocale
              in formatTime tc "%F %T" t
+
+-- guess I did this for fun?
+split :: String -> Char -> [String]
+split [] _ = []
+split str del = foldr fun [[]] str
+  where
+    fun x [[]] = [[x]]
+    fun x (y:ys)
+      | x == del = []:(trim y):ys
+      | otherwise = (x:y):ys
+
+trim :: String -> String
+trim = trim' . reverse . trim' . reverse
+  where
+    trim' s = dropWhile isSpace s
+
+    isSpace x = x == ' '
+
+renderDuration :: NominalDiffTime -> String
+renderDuration = readSeconds . round
