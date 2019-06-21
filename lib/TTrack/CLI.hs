@@ -1,9 +1,10 @@
 module TTrack.CLI where
 
-import           TTrack.Commands
-import           TTrack.Types
-import           TTrack.TimeUtils
 import           Data.Maybe.Extras (fromJustMsg)
+
+import           TTrack.Commands
+import           TTrack.TimeUtils
+import           TTrack.Types
 
 handleInput :: [String] -> TrackerMonad ()
 handleInput args = do
@@ -25,7 +26,9 @@ handleInput args = do
       sess <- stop
       tell
         [ "Session duration was "
-            ++ (readSeconds . round . fromJustMsg "sessDuration sess" $ sessDuration sess)]
+            ++ (readSeconds . round . fromJustMsg "sessDuration sess"
+                $ sessDuration sess)
+        ]
       return ()
     ["list"] -> do
       list
@@ -37,7 +40,8 @@ handleInput args = do
         [ "Current session is with task: "
             ++ taskName task
             ++ ". Session duration: "
-            ++ (readSeconds $ round d)]
+            ++ (readSeconds $ round d)
+        ]
       return ()
     ["report", n] -> do
       report n
@@ -57,8 +61,7 @@ handleInput args = do
       return ()
 
 syntaxError :: String
-syntaxError =
-  "Usage: ttrack command\n\
+syntaxError = "Usage: ttrack command\n\
               \\n\
               \commands:\n\
               \\t create {task}\t\t\t creates a new task\n\

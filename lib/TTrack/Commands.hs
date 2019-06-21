@@ -17,7 +17,7 @@ create name = do
   last <- getLastSession
   if isEnded last
     then createNew
-    else do
+    else
       throwError
         $ OtherSessionStarted
         $ "A session is already in progress. Please close it \
@@ -55,12 +55,11 @@ start name mbegin = do
         $ putStrLn
         $ "No task with name " ++ name ++ " was found. Create new task? (y/n)"
       resp <- liftIO $ getLine
-      if (map toLower resp == "y")
+      if map toLower resp == "y"
         then do
           create name
           start name mbegin
-        else do
-          throwError $ OtherError $ "No action taken"
+        else throwError $ OtherError $ "No action taken"
 
     startSession' :: Task -> Maybe String -> TrackerMonad Session
     startSession' t mbegin = do
@@ -75,9 +74,7 @@ current = do
   last <- getLastSession
   if isEnded last
     then throwError $ NoTaskFound $ "No current task could be found"
-    else do
-      let task = sessTask last
-      return $ task
+    else return $ sessTask last
 
 stop :: TrackerMonad Session
 stop = do
@@ -96,7 +93,7 @@ stop = do
     else inputDuration endSess
   where
     isCorrect r
-      | (map toUpper r) == "Y" = True
+      | map toUpper r == "Y" = True
       | otherwise = False
 
     inputDuration sess = do
@@ -104,9 +101,8 @@ stop = do
       durString <- liftIO getLine
       let durDiffTime = parseDurationToDiffTime durString
       case durDiffTime of
-        Just d  -> do
-          newSess <- setSessDuration sess d
-          return newSess
+        Just d  ->
+          setSessDuration sess d
         Nothing -> do
           liftIO
             $ putStrLn
@@ -120,8 +116,7 @@ report n = do
   task <- getTaskByName n
   sessions <- getTaskSessions task
   tz <- liftIO getCurrentTimeZone
-  mapM (\x -> tell [showSess x tz]) sessions
-  return ()
+  mapM_ (\x -> tell [showSess x tz]) sessions
 
 list :: TrackerMonad [Task]
 list = do
@@ -145,7 +140,7 @@ timeInInterval name from to = do
   t <- getTaskByName name
   ss <- getTaskSessionsInInterval t froms tos
   let time = sum $ map (toInteger . round . fromJustMsg "timeInInterval" . sessDuration) ss
-  return $ (fromInteger time :: NominalDiffTime)
+  return (fromInteger time :: NominalDiffTime)
 
 time :: String -> TrackerMonad NominalDiffTime
 time n = do
@@ -153,7 +148,7 @@ time n = do
   sessions <- getTaskSessions task
   -- TODO. This will fail when there is more than one un-ended session or
   -- if the un-ended session is not the last
-  durs <- liftIO $ mapM (sessDurationIO) sessions
+  durs <- liftIO $ mapM sessDurationIO sessions
   --let time = sum $ map (toInteger . round . fromJust . sessDuration) ss
   return $ sum durs
 
@@ -162,10 +157,8 @@ duration = do
   sess <- getLastSession
   if isEnded sess
     then throwError $ NoCurrentSession "No session is currently in progress"
-    else do
-      dur <- liftIO $ sessDurationIO sess
-      return dur
+    else liftIO $ sessDurationIO sess
 
 reset = do
   f <- doesFileExist dbname
-  when (f) $ removeFile dbname
+  when f $ removeFile dbname

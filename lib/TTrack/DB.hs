@@ -1,16 +1,21 @@
 module TTrack.DB where
 
-import           TTrack.Types
-import           TTrack.Utils
+import           Control.Exception
+import           Control.Monad (when)
+import           Control.Monad.Except
+import           Control.Monad.Reader
+
+import           Data.Time
+
 import           Database.HDBC
 import           Database.HDBC.Sqlite3
-import           Control.Monad (when)
-import           Control.Exception
-import           Control.Monad.Reader
-import           Control.Monad.Except
+
 import           Prelude hiding (handle)
-import           Data.Time
+
 import           System.Locale
+
+import           TTrack.Types
+import           TTrack.Utils
 
 connect :: FilePath -> IO Connection
 connect fp = do
@@ -57,10 +62,10 @@ createTask name = do
         $ quickQuery' dbh "SELECT id FROM tasks WHERE name=?" [toSql $ name]
       case id of
         [[x]] -> return $ Task { taskId = fromSql x, taskName = name }
-        y     -> throwError
+        y -> throwError
           $ UnexpectedSqlResult
           $ "addTask: unexpected result: " ++ show y
-    _  -> throwError
+    _ -> throwError
       $ TaskAlreadyExists
       $ "A task with name " ++ name ++ " already exists."
 
@@ -77,14 +82,15 @@ startSession task mstart = do
     $ quickQuery' dbh "SELECT * FROM sessions WHERE start=?" [toSql start]
   case r of
     [x] -> return $ sessFromSql x task
-    y   -> throwError
+    y -> throwError
       $ UnexpectedSqlResult
       $ "startSession: unexpected result: " ++ show y
 
-getTaskSessionsInInterval :: Task
-                          -> UTCTime
-                          -> UTCTime
-                          -> TrackerMonad [Session]
+getTaskSessionsInInterval
+  :: Task
+  -> UTCTime
+  -> UTCTime
+  -> TrackerMonad [Session]
 getTaskSessionsInInterval task from to = do
   dbh <- ask
   r <- liftIO
@@ -93,7 +99,7 @@ getTaskSessionsInInterval task from to = do
       "SELECT * FROM sessions WHERE taskId=? AND start > datetime(?) AND end < datetime(?)"
       [toSql $ taskId task, toSql $ utcToISO from, toSql $ utcToISO to]
   case r of
-    []   -> throwError
+    [] -> throwError
       $ NoSessionFound
         ("No sessions found between "
          ++ (utcToISO from)
@@ -115,7 +121,7 @@ addSession sess = do
     $ sessToSql sess
   case r of
     [[id]] -> return $ sess { sessId = fromSql id }
-    y      -> throwError
+    y -> throwError
       $ UnexpectedSqlResult
       $ "addSession: unexpected result: " ++ show y
 
@@ -124,10 +130,12 @@ endSession sess = do
   dbh <- ask
   r <- liftIO $ doSql dbh
   case r of
-    []      -> throwError
-      $ NoSessionFound "endSession: unexpected empty result" (sessTask sess)
+    [] -> throwError
+      $ NoSessionFound
+        "endSession: unexpected empty result"
+        (sessTask sess)
     [[end]] -> return $ sess { sessEnd = fromSql end }
-    y       -> throwError
+    y -> throwError
       $ UnexpectedSqlResult
       $ "endSession: unexpected result: " ++ show y
   where
@@ -172,10 +180,10 @@ getTaskByName name = do
   r <- liftIO $ quickQuery' dbh "SELECT * FROM tasks WHERE name=?" [toSql name]
   case r of
     [row] -> return $ taskFromSql row
-    []    -> throwError
+    [] -> throwError
       $ NoTaskFound
       $ "No task with name " ++ name ++ " was found"
-    y     -> throwError
+    y -> throwError
       $ UnexpectedSqlResult
       $ "Unexpected result in getTaskByName: " ++ show y
 
@@ -201,7 +209,7 @@ getTasks = do
   r <- liftIO $ quickQuery' dbh "SELECT * FROM tasks" []
   case r of
     [] -> throwError $ NoTaskFound $ "No tasks found."
-    x  -> return $ map taskFromSql x
+    x -> return $ map taskFromSql x
 
 removeTask :: String -> TrackerMonad Task
 removeTask n = do
@@ -220,7 +228,7 @@ getTaskSessions task = do
       [toSql $ taskId task]
   case r of
     --[] -> throwError $ NoSessionFound $ "No sessions found for task " ++ taskName task
-    []   -> return []
+    [] -> return []
     rows -> return $ map (`sessFromSql` task) rows
 
 removeTaskSessions :: Task -> TrackerMonad [Session]
@@ -228,7 +236,7 @@ removeTaskSessions task = do
   sessions <- getTaskSessions task
   case sessions of
     [] -> return []
-    _  -> do
+    _ -> do
       dbh <- ask
       liftIO
         $ run dbh "DELETE FROM sessions WHERE taskId=?" [toSql $ taskId task]

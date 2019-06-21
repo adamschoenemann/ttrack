@@ -33,7 +33,7 @@ parseSeconds = parseTimeUnit Seconds 's'
 
 parseTimeUnit :: (Integer -> TimeUnit) -> Char -> CharParser () TimeUnit
 parseTimeUnit constructor end =
-  constructor <$> (\x -> read x :: Integer) <$> (many digit <* char end)
+  constructor . (\x -> read x :: Integer) <$> (many digit <* char end)
 
 parseDurationToTimeUnits
   :: CharParser () (Maybe TimeUnit, Maybe TimeUnit, Maybe TimeUnit)
