@@ -1,1 +1,3 @@
-module TTrack.DateParsing where
+{-# LANGUAGE FlexibleContexts #-}
+
+module TTrack.DateParsing
