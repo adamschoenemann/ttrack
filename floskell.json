@@ -82,7 +82,7 @@
     },
     "penalty": {
       "overfull": 10,
-      "indent": 10,
+      "indent": 5,
       "overfull-once": 200,
       "max-line-length": 80,
       "linebreak": 100
