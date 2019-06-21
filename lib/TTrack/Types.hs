@@ -42,6 +42,16 @@ data TTError
   | OtherError String
   deriving (Show, Eq)
 
+-- Make Either ErrorT a an instance of monoid for concatenation.
+-- WITH short-circuiting
+instance (Monoid a) => Monoid (Either e a) where
+  mempty = (Right mempty)
+
+  mappend (Left x) _ = Left x
+  mappend _ (Left x) = Left x
+  mappend (Right a) (Right b) = Right (a `mappend` b)
+
+
 unwrapTTError :: TTError -> String
 unwrapTTError err @ (NoTaskFound s) = s
 unwrapTTError err @ (NoSessionFound s _) = s
