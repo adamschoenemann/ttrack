@@ -10,7 +10,6 @@ import           Data.Monoid
 import           Data.Maybe
 import           Control.Monad
 import           Control.Monad.Except
-import           System.Locale hiding (defaultTimeLocale)
 
 -- Parses a duration of format hms e.g. 1h30m10s
 --parseDuration :: String -> Maybe NominalDiffTime
@@ -105,7 +104,7 @@ parseTimeFormat time =
          $ "Invalid format " ++ time ++ " was supplied"
 
 parseTimeInput :: String -> TrackerMonad UTCTime
-parseTimeInput "now" = liftIO $ getCurrentTime
+parseTimeInput "now" = liftIO getCurrentTime
 parseTimeInput "yesterday" = do
   now <- liftIO getCurrentTime
   return $ UTCTime (addDays (-1) $ utctDay now) 0

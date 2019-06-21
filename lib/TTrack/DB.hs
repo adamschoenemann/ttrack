@@ -12,8 +12,6 @@ import           Database.HDBC.Sqlite3
 
 import           Prelude hiding (handle)
 
-import           System.Locale
-
 import           TTrack.Types
 import           TTrack.Utils
 

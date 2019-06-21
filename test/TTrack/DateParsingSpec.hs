@@ -1,22 +1,22 @@
 module TTrack.DateParsingSpec where
 
-import Test.Hspec
-import Data.Time
-import System.Locale
 import           Data.Maybe.Extras (fromJustMsg)
-import TTrack.DateParsing
-import Control.Monad.Trans
+import           Data.Time
+import           TTrack.Tests (parseISO)
+
+import           TTrack.DateParsing
+
+import           Test.Hspec
 
 spec :: Spec
 spec = do
-	describe "TTrack.DateParsing" $ do
-		describe "parseDateWithContext" $ do
-			it "parses a date and fills out missing information from current date" $ do
-				now <- liftIO getCurrentTime
-				let today = utctDay now
-				let (year,month,day) = toGregorian today
-				parseDateWithContext now "2014-10-22" `shouldBe` (Just oct22nd2014)
-				parseDateWithContext now "09-22" `shouldBe`
-					(Just $ fromGregorian year 09 22)
+  describe "TTrack.DateParsing" $ do
+      describe "parseISO" $ do
+        it "parses" $ do
+          parseISO "2018-08-09" `shouldBe` Right (utcDate 2018 8 9)
 
-oct22nd2014 = utctDay $ fromJustMsg "oct22nd2014" $ parseTimeM True defaultTimeLocale "%F" "2014-10-22"
+utcDate y m d = UTCTime (fromGregorian y m d) 0
+
+oct22nd2014 = utctDay
+  $ fromJustMsg "oct22nd2014"
+  $ parseTimeM True defaultTimeLocale "%F" "2014-10-22"

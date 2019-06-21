@@ -9,7 +9,6 @@ import           System.Directory (doesFileExist, removeFile)
 import           Control.Monad.Except
 import           Data.Time
 import           Data.Maybe.Extras (fromJustMsg)
-import           System.Locale
 import           Data.Char (toUpper, toLower)
 
 create :: String -> TrackerMonad Task

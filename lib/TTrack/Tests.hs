@@ -11,8 +11,6 @@ import           Data.Char
 import           Data.Monoid
 import           Data.Time
 
-import           System.Locale hiding (defaultTimeLocale)
-
 import           TTrack.Types
 
 -- Parses a duration of format hms e.g. 1h30m10s
@@ -27,8 +25,7 @@ parseDuration str = parseDuration' str 0 0
         | isSep s = parseDuration' rest (t + (b * (parseSep s))) 0
         | isSpace s = parseDuration' rest t b
         | otherwise = Nothing
-      parseDuration' "" t b = Just
-        (fromInteger (t + b) :: NominalDiffTime)
+      parseDuration' "" t b = Just (fromInteger (t + b) :: NominalDiffTime)
 
       dropNums str = dropWhile isNumber str
 
@@ -62,17 +59,14 @@ readSeconds s =
         else ""
   in (format h "h") ++ (format m "m") ++ format s'' "s"
 
-  -- Make Either ErrorT a an instance of monoid for concatenation.
-  -- WITH short-circuiting
+   -- Make Either ErrorT a an instance of monoid for concatenation.
+   -- WITH short-circuiting
 instance (Monoid a) => Monoid (Either TTError a) where
   mempty = (Right mempty)
 
-  mappend (Left x) _ =
-    (Left x)
-  mappend _ (Left x) =
-    (Left x)
-  mappend (Right a) (Right b) =
-    (Right (a `mappend` b))
+  mappend (Left x) _ = Left x
+  mappend _ (Left x) = Left x
+  mappend (Right a) (Right b) = Right (a `mappend` b)
 
 renderDuration :: NominalDiffTime -> String
 renderDuration = readSeconds . round
@@ -109,11 +103,6 @@ parseDayFormat day =
        [y] -> Right "%Y"
        [y, m] -> Right "%Y-%m"
        [y, m, d] -> Right "%F"
-
-test :: TrackerMonad ()
-test = do
-  --tf <- return $ lift . lift $ parseTimeFormat "20:33:31"
-  return ()
 
 parseTimeFormat :: MonadError TTError m => String -> m String
 parseTimeFormat time =

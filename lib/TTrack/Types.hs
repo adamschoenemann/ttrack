@@ -1,3 +1,4 @@
+{-# LANGUAGE GeneralizedNewtypeDeriving #-}
 module TTrack.Types (module TTrack.Types, tell) where
 
 import           Control.Applicative ((<$>))
@@ -14,13 +15,13 @@ import           Data.Time
 import           Database.HDBC
 import           Database.HDBC.Sqlite3
 
-import           System.Locale hiding (defaultTimeLocale)
 import           System.Time.Utils (renderSecs)
 
 import           TTrack.TimeUtils (readSeconds)
 
-data Task = Task { taskId :: Integer, taskName :: String }
-  deriving (Show)
+data Task =
+  Task { taskId :: Integer, taskName :: String }
+  deriving (Show, Eq)
 
 data Session =
   Session { sessId :: Integer
@@ -39,7 +40,7 @@ data TTError
   | NoCurrentSession String
   | NoLastSession String
   | OtherError String
-  deriving (Show)
+  deriving (Show, Eq)
 
 unwrapTTError :: TTError -> String
 unwrapTTError err @ (NoTaskFound s) = s
@@ -114,12 +115,29 @@ sessToSql sess =
   , toSql $ sessEnd sess
   ]
 
-type TrackerMonad a =
-  WriterT [String] (ReaderT Connection (ExceptT TTError IO)) a
+type TrackerConfig = Session
+-- data TrackerConfig
+--   = TrackerConfig
+--     { _connection :: Connection
+--     , _locale :: TimeLocale
+--     }
+
+newtype TrackerMonad a =
+  TrackerMonad
+  { unTrackerMonad
+    :: WriterT [String] (ReaderT Connection (ExceptT TTError IO)) a
+  } deriving
+  ( Functor
+  , Applicative
+  , Monad
+  , MonadWriter [String]
+  , MonadReader Connection
+  , MonadError TTError, MonadIO
+  )
 
 runTrackerMonad
   :: TrackerMonad a
   -> Connection
   -> IO (Either TTError (a, [String]))
 runTrackerMonad m conn = runExceptT
-  (runReaderT (runWriterT m) conn)
+  (runReaderT (runWriterT $ unTrackerMonad m) conn)
