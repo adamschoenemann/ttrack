@@ -32,6 +32,7 @@ create name = do
 
 start :: String -> Maybe String -> TrackerMonad Session
 start name mbegin = do
+  tz <- liftIO getCurrentTimeZone
   t <- getTaskByName name
   last <- getLastSession
   if not (isEnded last)
@@ -40,14 +41,13 @@ start name mbegin = do
       $ "Can't start a new session when session "
       ++ (taskName . sessTask $ last)
       ++ " is already open. Please close it first"
-    else startSession' t mbegin
-  `catchError` errorHandler
+    else startSession' tz t mbegin `catchError` errorHandler tz
   where
-    errorHandler (NoTaskFound msg) = createNew
-    errorHandler (NoLastSession msg) = do
+    errorHandler _  (NoTaskFound msg) = createNew
+    errorHandler tz (NoLastSession msg) = do
       t <- getTaskByName name
-      startSession' t mbegin
-    errorHandler e = throwError e
+      startSession' tz t mbegin
+    errorHandler _ e = throwError e
 
     createNew = do
       liftIO
@@ -60,9 +60,8 @@ start name mbegin = do
           start name mbegin
         else throwError $ OtherError $ "No action taken"
 
-    startSession' :: Task -> Maybe String -> TrackerMonad Session
-    startSession' t mbegin = do
-      mbeginUtc <- maybe (pure Nothing) ((Just <$>) . parseTimeInput) mbegin
+    startSession' tz t mbegin = do
+      mbeginUtc <- maybe (pure Nothing) ((Just <$>) . parseTimeInput tz) mbegin
       s <- startSession t mbeginUtc
       let from = maybe "" (\b -> " from " ++ show b) mbeginUtc
       tell ["Started tracking " ++ name ++ from]
@@ -134,8 +133,9 @@ remove name = do
 
 timeInInterval :: String -> String -> String -> TrackerMonad NominalDiffTime
 timeInInterval name from to = do
-  froms <- parseTimeInput from
-  tos <- parseTimeInput to
+  tz <- liftIO getCurrentTimeZone
+  froms <- parseTimeInput tz from
+  tos <- parseTimeInput tz to
   t <- getTaskByName name
   ss <- getTaskSessionsInInterval t froms tos
   let time = sum $ map (toInteger . round . fromJustMsg "timeInInterval" . sessDuration) ss

@@ -15,8 +15,8 @@ import           Control.Monad.Except
 
 type MonadTTError m = (MonadError TTError m, MonadIO m)
 
-parseISO :: MonadTTError m => String -> m UTCTime
-parseISO str = do
+parseISO :: MonadTTError m => TimeZone -> String -> m UTCTime
+parseISO tz str = do
   format <- formatFromDateString str
   let time = parseTimeM True defaultTimeLocale format str
   case time of
@@ -27,7 +27,7 @@ parseISO str = do
       ++ "'' parsed from date string '"
       ++ str
       ++ "' is invalid"
-    Just t  -> return t
+    Just t  -> pure . zonedTimeToUTC $ t { zonedTimeZone = tz }
 
 -- Takes a date string in (partial) ISO format and returns a format string
 -- E.g 2014-09-15 16:03:01
@@ -61,15 +61,15 @@ parseTimeFormat time =
          $ OtherError
          $ "Invalid format " ++ time ++ " was supplied"
 
-parseTimeInput :: MonadTTError m => String -> m UTCTime
-parseTimeInput "now" = liftIO getCurrentTime
-parseTimeInput "yesterday" = do
+parseTimeInput :: MonadTTError m => TimeZone -> String -> m UTCTime
+parseTimeInput _ "now" = liftIO getCurrentTime
+parseTimeInput _ "yesterday" = do
   now <- liftIO getCurrentTime
   return $ UTCTime (addDays (-1) $ utctDay now) 0
-parseTimeInput "today" = do
+parseTimeInput tz "today" = do
   now <- liftIO getCurrentTime
-  parseISO $ show $ utctDay now
-parseTimeInput i = parseISO i
+  parseISO tz $ show $ utctDay now
+parseTimeInput tz i = parseISO tz i
 
 utcToISO :: UTCTime -> String
 utcToISO t = let tc = defaultTimeLocale

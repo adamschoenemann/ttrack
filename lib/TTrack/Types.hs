@@ -24,12 +24,12 @@ data Task =
   deriving (Show, Eq)
 
 data Session =
-  Session { sessId :: Integer
-          , sessTask :: Task
-          , sessStart :: UTCTime
-          , sessEnd :: Maybe UTCTime
-          }
-  deriving (Show)
+  Session
+  { sessId :: Integer
+  , sessTask :: Task
+  , sessStart :: UTCTime
+  , sessEnd :: Maybe UTCTime
+  } deriving (Show)
 
 data TTError
   = NoTaskFound String
