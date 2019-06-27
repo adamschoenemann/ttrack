@@ -145,6 +145,9 @@ newtype TrackerMonad a =
   , MonadError TTError, MonadIO
   )
 
+getTTTimeZone :: TrackerMonad TimeZone
+getTTTimeZone = liftIO getCurrentTimeZone
+
 runTrackerMonad
   :: TrackerMonad a
   -> Connection

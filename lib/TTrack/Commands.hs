@@ -77,10 +77,14 @@ current = do
 stop :: TrackerMonad Session
 stop = do
   lastSess <- getLastSession
+  tz <- getTTTimeZone
+  let start = sessStartZoned lastSess tz
   endSess <- endSession lastSess
   let (Just dur) = sessDuration endSess
   tellUsr
-    $ "Session duration was "
+    $ "Session started at "
+    ++ show start
+    ++ " and duration was "
     ++ renderDuration dur
     ++ ".\nIs this correct? (y/n)"
   resp <- liftIO getLine
