@@ -32,7 +32,7 @@ create name = do
 
 start :: String -> Maybe String -> TrackerMonad Session
 start name mbegin = do
-  tz <- liftIO getCurrentTimeZone
+  tz <- getTTTimeZone
   t <- getTaskByName name
   last <- getLastSession
   if not (isEnded last)
@@ -117,7 +117,7 @@ report :: String -> TrackerMonad ()
 report n = do
   task <- getTaskByName n
   sessions <- getTaskSessions task
-  tz <- liftIO getCurrentTimeZone
+  tz <- getTTTimeZone
   mapM_ (\x -> tell [showSess x tz]) sessions
 
 list :: TrackerMonad [Task]
@@ -137,7 +137,7 @@ remove name = do
 
 timeInInterval :: String -> String -> String -> TrackerMonad NominalDiffTime
 timeInInterval name from to = do
-  tz <- liftIO getCurrentTimeZone
+  tz <- getTTTimeZone
   froms <- parseTimeInput tz from
   tos <- parseTimeInput tz to
   t <- getTaskByName name
