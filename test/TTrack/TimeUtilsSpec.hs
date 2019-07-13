@@ -2,8 +2,12 @@ module TTrack.TimeUtilsSpec where
 
 import Test.Hspec
 import Test.QuickCheck
+import Data.Time.LocalTime
+import Data.Time.Calendar
+import Data.Time.Clock
 import Control.Exception (evaluate)
 import TTrack.TimeUtils
+import TTrack.Utils
 
 spec :: Spec
 spec = do
@@ -22,6 +26,29 @@ spec = do
         parseDurationToSeconds "1m" `shouldBe` Just m
         parseDurationToSeconds "1s" `shouldBe` Just s
         parseDurationToSeconds "gobblydegook" `shouldBe` Nothing
+  describe "TTrack.Utils" $ do
+    describe "parseDateTimeWithDefault" $ do
+      let day = fromGregorian 2019 7 10
+      let tz = hoursToTimeZone 2
+      let tod = TimeOfDay 9 23 59
+      let def = ZonedTime (LocalTime day tod) tz
+      it "does not use default if all details given" $ do
+        utc <- parseDateTimeWithDefault def "2020-06-11T16:01:58+01:30"
+        utctDay utc `shouldBe` fromGregorian 2020 6 11
+      it "uses default year when appropriate" $ do
+        utc <- parseDateTimeWithDefault def "06-11T16:01:58+01:30"
+        utctDay utc `shouldBe` fromGregorian 2019 6 11
+      it "uses default month when appropriate" $ do
+        utc <- parseDateTimeWithDefault def "11T16:01:58+01:30"
+        utctDay utc `shouldBe` fromGregorian 2019 7 11
+      it "uses default date when appropriate" $ do
+        utc <- parseDateTimeWithDefault def "16:01:58+01:30"
+        utctDay utc `shouldBe` fromGregorian 2019 7 10
+      it "uses default hour when appropriate" $ do
+        utc <- parseDateTimeWithDefault def "01:58+01:30"
+        utctDay utc `shouldBe` fromGregorian 2019 7 10
+        -- TODO test defalt hour/min/sec/tz
+        diffTimeTo utctDayTime utc
 
 s = 1
 m = 60
