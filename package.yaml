@@ -15,6 +15,7 @@ library:
   - directory
   - parsec
   - mtl
+  - microlens-platform
 executables:
   ttrack:
     main: Main.hs

@@ -1,4 +1,5 @@
 {-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE TemplateHaskell #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE ConstraintKinds #-}
 
@@ -9,11 +10,66 @@ import           TTrack.TimeUtils
 import           Data.Time
 import           Data.Char
 import           Data.Monoid
+import           Data.Foldable (asum)
 import           Data.Maybe
 import           Control.Monad
 import           Control.Monad.Except
+import           Lens.Micro.Platform
+
+makeLensesFor
+  [("localDay", "_localDay"), ("localTimeOfDay", "_localTimeOfDay")]
+  ''LocalTime
+
+makeLensesFor
+  [ ("zonedTimeToLocalTime", "_zonedTimeToLocalTime")
+  , ("zonedTimeZone", "_zonedTimeZone")
+  ]
+  ''ZonedTime
+
+makeLensesFor
+  [ ("todHour", "_todHour")
+  , ("todMin", "_todMin")
+  , ("todSec", "_todSec")
+  ]
+  ''TimeOfDay
+
+_year :: Lens' Day Integer
+_year = lens get set where
+  get d = let (y, _, _) = toGregorian d in y
+  set d y = let (_, m, dom) = toGregorian d in fromGregorian y m dom
+
+_month :: Lens' Day Int
+_month = lens get set where
+  get d = let (_, m, _) = toGregorian d in m
+  set d m = let (y, _, dom) = toGregorian d in fromGregorian y m dom
+
+_dom :: Lens' Day Int
+_dom = lens get set where
+  get d = let (_, _, dom) = toGregorian d in dom
+  set d dom = let (y, m, _) = toGregorian d in fromGregorian y m dom
 
 type MonadTTError m = (MonadError TTError m, MonadIO m)
+
+parseDateTimeWithDefault :: Monad m => ZonedTime -> String -> m UTCTime
+parseDateTimeWithDefault def@(ZonedTime (LocalTime day (TimeOfDay h m s)) tz) input =
+  maybe (fail "no format applicable") (pure . zonedTimeToUTC) $ asum (map tryfmt attempts)
+  where
+    tryfmt (format, f) = f <$> parseTimeM True defaultTimeLocale format input
+    locale = zonedTimeZone def
+    attempts :: [(String, ZonedTime -> ZonedTime)]
+    attempts =
+      [ ("%Y-%m-%dT%H:%M:%S%Z", id)
+      , ("%m-%dT%H:%M:%S%Z", setYear)
+      , ("%dT%H:%M:%S%Z", setYear . setMonth)
+      , ("%H:%M:%S%Z", setYear . setMonth . setDom)
+      , ("%M:%S%Z", setYear . setMonth . setDom . setHour)
+      ]
+    format = "%Y"
+    (year, month, dom) = toGregorian day
+    setYear = _zonedTimeToLocalTime . _localDay . _year .~ year
+    setMonth = _zonedTimeToLocalTime . _localDay . _month .~ month
+    setDom = _zonedTimeToLocalTime . _localDay . _dom .~ dom
+    setHour = _zonedTimeToLocalTime . _localTimeOfDay . _todHour .~ h
 
 parseISO :: MonadTTError m => TimeZone -> String -> m UTCTime
 parseISO tz str = do
