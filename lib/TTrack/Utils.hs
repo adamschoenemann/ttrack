@@ -48,21 +48,39 @@ _dom = lens get set where
   get d = let (_, _, dom) = toGregorian d in dom
   set d dom = let (y, m, _) = toGregorian d in fromGregorian y m dom
 
+gregorian :: Lens' ZonedTime (Integer, Int, Int)
+gregorian = lens get set where
+  get (ZonedTime (LocalTime d _) _) = toGregorian d
+  set zt (y, m, dom) = zt & _zonedTimeToLocalTime . _localDay %~ update where
+    update d = d & _year .~ y & _month .~ m & _dom .~ dom
+
+ztTimeOfDay :: Lens' ZonedTime TimeOfDay
+ztTimeOfDay = lens get set where
+  get (ZonedTime (LocalTime _ tod) _) = tod
+  set zt tod = zt & _zonedTimeToLocalTime . _localTimeOfDay .~ tod
+
 type MonadTTError m = (MonadError TTError m, MonadIO m)
 
-parseDateTimeWithDefault :: Monad m => ZonedTime -> String -> m UTCTime
-parseDateTimeWithDefault def@(ZonedTime (LocalTime day (TimeOfDay h m s)) tz) input =
-  maybe (fail "no format applicable") (pure . zonedTimeToUTC) $ asum (map tryfmt attempts)
+parseDateTimeWithDefault :: Monad m => ZonedTime -> String -> m ZonedTime
+parseDateTimeWithDefault def@(ZonedTime (LocalTime day (TimeOfDay h m s)) tz) input
+  | trim input == "" = fail "empty input"
+  | otherwise =
+    maybe (fail "no format applicable") pure $ asum (map tryfmt attempts)
   where
     tryfmt (format, f) = f <$> parseTimeM True defaultTimeLocale format input
     locale = zonedTimeZone def
-    attempts :: [(String, ZonedTime -> ZonedTime)]
     attempts =
-      [ ("%Y-%m-%dT%H:%M:%S%Z", id)
-      , ("%m-%dT%H:%M:%S%Z", setYear)
-      , ("%dT%H:%M:%S%Z", setYear . setMonth)
-      , ("%H:%M:%S%Z", setYear . setMonth . setDom)
-      , ("%M:%S%Z", setYear . setMonth . setDom . setHour)
+      map (_2 %~ (. setTz)) (init attemptsNoTZ)
+      <> map (_1 %~ (<> "%Z")) attemptsNoTZ
+    attemptsNoTZ :: [(String, ZonedTime -> ZonedTime)]
+    attemptsNoTZ =
+      [ ("%Y-%m-%dT%H:%M:%S", id)
+      , ("%m-%dT%H:%M:%S", setYear)
+      , ("%dT%H:%M:%S", setYear . setMonth)
+      , ("%H:%M:%S", setYear . setMonth . setDom)
+      , ("%M:%S", setYear . setMonth . setDom . setHour)
+      , ("%S", setYear . setMonth . setDom . setHour . setMinute)
+      , ("", setYear . setMonth . setDom . setHour . setMinute . setSeconds)
       ]
     format = "%Y"
     (year, month, dom) = toGregorian day
@@ -70,6 +88,9 @@ parseDateTimeWithDefault def@(ZonedTime (LocalTime day (TimeOfDay h m s)) tz) in
     setMonth = _zonedTimeToLocalTime . _localDay . _month .~ month
     setDom = _zonedTimeToLocalTime . _localDay . _dom .~ dom
     setHour = _zonedTimeToLocalTime . _localTimeOfDay . _todHour .~ h
+    setMinute = _zonedTimeToLocalTime . _localTimeOfDay . _todMin .~ m
+    setSeconds = _zonedTimeToLocalTime . _localTimeOfDay . _todSec .~ s
+    setTz = _zonedTimeZone .~ tz
 
 parseISO :: MonadTTError m => TimeZone -> String -> m UTCTime
 parseISO tz str = do

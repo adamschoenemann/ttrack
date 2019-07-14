@@ -8,6 +8,7 @@ import Data.Time.Clock
 import Control.Exception (evaluate)
 import TTrack.TimeUtils
 import TTrack.Utils
+import Lens.Micro.Platform
 
 spec :: Spec
 spec = do
@@ -33,22 +34,59 @@ spec = do
       let tod = TimeOfDay 9 23 59
       let def = ZonedTime (LocalTime day tod) tz
       it "does not use default if all details given" $ do
-        utc <- parseDateTimeWithDefault def "2020-06-11T16:01:58+01:30"
-        utctDay utc `shouldBe` fromGregorian 2020 6 11
+        dateTime <- parseDateTimeWithDefault def "2020-06-11T16:01:58+01:30"
+        getDay dateTime `shouldBe` (2020, 6, 11)
+        getTod dateTime `shouldBe` TimeOfDay 16 1 58
+        getTz dateTime `shouldBe` minutesToTimeZone 90
+      it "uses default timezone when appropriate" $ do
+        dateTime <- parseDateTimeWithDefault def "2020-06-11T16:01:58"
+        getDay dateTime `shouldBe` (2020, 6, 11)
+        getTod dateTime `shouldBe` TimeOfDay 16 1 58
+        getTz dateTime `shouldBe` minutesToTimeZone 120
       it "uses default year when appropriate" $ do
-        utc <- parseDateTimeWithDefault def "06-11T16:01:58+01:30"
-        utctDay utc `shouldBe` fromGregorian 2019 6 11
+        dateTime <- parseDateTimeWithDefault def "06-11T16:01:58+01:30"
+        getDay dateTime `shouldBe` (2019, 6, 11)
+        getTod dateTime `shouldBe` TimeOfDay 16 1 58
+        getTz dateTime `shouldBe` minutesToTimeZone 90
       it "uses default month when appropriate" $ do
-        utc <- parseDateTimeWithDefault def "11T16:01:58+01:30"
-        utctDay utc `shouldBe` fromGregorian 2019 7 11
+        dateTime <- parseDateTimeWithDefault def "11T16:01:58+01:30"
+        getDay dateTime `shouldBe` (2019, 7, 11)
+        getTod dateTime `shouldBe` TimeOfDay 16 1 58
+        getTz dateTime `shouldBe` minutesToTimeZone 90
       it "uses default date when appropriate" $ do
-        utc <- parseDateTimeWithDefault def "16:01:58+01:30"
-        utctDay utc `shouldBe` fromGregorian 2019 7 10
+        dateTime <- parseDateTimeWithDefault def "16:01:58+01:30"
+        getDay dateTime `shouldBe` (2019, 7, 10)
+        getTod dateTime `shouldBe` TimeOfDay 16 1 58
+        getTz dateTime `shouldBe` minutesToTimeZone 90
       it "uses default hour when appropriate" $ do
-        utc <- parseDateTimeWithDefault def "01:58+01:30"
-        utctDay utc `shouldBe` fromGregorian 2019 7 10
-        -- TODO test defalt hour/min/sec/tz
-        diffTimeTo utctDayTime utc
+        dateTime <- parseDateTimeWithDefault def "01:58+01:30"
+        getDay dateTime `shouldBe` (2019, 7, 10)
+        getTod dateTime `shouldBe` TimeOfDay 9 1 58
+        getTz dateTime `shouldBe` minutesToTimeZone 90
+      it "uses default minute when appropriate" $ do
+        dateTime <- parseDateTimeWithDefault def "58+01:30"
+        getDay dateTime `shouldBe` (2019, 7, 10)
+        getTod dateTime `shouldBe` TimeOfDay 9 23 58
+        getTz dateTime `shouldBe` minutesToTimeZone 90
+      it "uses default seconds when appropriate" $ do
+        dateTime <- parseDateTimeWithDefault def "+01:30"
+        getDay dateTime `shouldBe` (2019, 7, 10)
+        getTod dateTime `shouldBe` TimeOfDay 9 23 59
+        getTz dateTime `shouldBe` minutesToTimeZone 90
+      it "fails when no string given" $ do
+        case parseDateTimeWithDefault def "" of
+          Nothing -> pure ()
+          Just dt -> expectationFailure (show dt)
+        -- parseDateTimeWithDefault def "" `shouldThrow` anyIOException
+
+getTz :: ZonedTime -> TimeZone
+getTz = view _zonedTimeZone
+
+getTod :: ZonedTime -> TimeOfDay
+getTod = view ztTimeOfDay
+
+getDay :: ZonedTime -> (Integer, Int, Int)
+getDay = view gregorian
 
 s = 1
 m = 60
