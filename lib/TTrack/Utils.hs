@@ -62,7 +62,7 @@ ztTimeOfDay = lens get set where
 type MonadTTError m = (MonadError TTError m, MonadIO m)
 
 parseDateTimeWithDefault :: Monad m => ZonedTime -> String -> m ZonedTime
-parseDateTimeWithDefault def@(ZonedTime (LocalTime day (TimeOfDay h m s)) tz) input
+parseDateTimeWithDefault def@(ZonedTime (LocalTime day (TimeOfDay h m _)) tz) input
   | trim input == "" = fail "empty input"
   | otherwise =
     maybe (fail "no format applicable") pure $ asum (map tryfmt attempts)
@@ -70,26 +70,22 @@ parseDateTimeWithDefault def@(ZonedTime (LocalTime day (TimeOfDay h m s)) tz) in
     tryfmt (format, f) = f <$> parseTimeM True defaultTimeLocale format input
     locale = zonedTimeZone def
     attempts =
-      map (_2 %~ (. setTz)) (init attemptsNoTZ)
+      map (_2 %~ (. setTz)) attemptsNoTZ
       <> map (_1 %~ (<> "%Z")) attemptsNoTZ
     attemptsNoTZ :: [(String, ZonedTime -> ZonedTime)]
     attemptsNoTZ =
-      [ ("%Y-%m-%dT%H:%M:%S", id)
-      , ("%m-%dT%H:%M:%S", setYear)
-      , ("%dT%H:%M:%S", setYear . setMonth)
+      [ ("%0Y-%0m-%0dT%H:%M:%S", id)
+      , ("%0m-%0dT%H:%M:%S", setYear)
+      , ("%0dT%H:%M:%S", setYear . setMonth)
       , ("%H:%M:%S", setYear . setMonth . setDom)
-      , ("%M:%S", setYear . setMonth . setDom . setHour)
-      , ("%S", setYear . setMonth . setDom . setHour . setMinute)
-      , ("", setYear . setMonth . setDom . setHour . setMinute . setSeconds)
+      , ("%H:%M", setYear . setMonth . setDom)
       ]
     format = "%Y"
     (year, month, dom) = toGregorian day
     setYear = _zonedTimeToLocalTime . _localDay . _year .~ year
     setMonth = _zonedTimeToLocalTime . _localDay . _month .~ month
     setDom = _zonedTimeToLocalTime . _localDay . _dom .~ dom
-    setHour = _zonedTimeToLocalTime . _localTimeOfDay . _todHour .~ h
-    setMinute = _zonedTimeToLocalTime . _localTimeOfDay . _todMin .~ m
-    setSeconds = _zonedTimeToLocalTime . _localTimeOfDay . _todSec .~ s
+    setSeconds = _zonedTimeToLocalTime . _localTimeOfDay . _todSec .~ 0
     setTz = _zonedTimeZone .~ tz
 
 parseISO :: MonadTTError m => TimeZone -> String -> m UTCTime
@@ -146,11 +142,15 @@ parseTimeInput _ "yesterday" = do
 parseTimeInput tz "today" = do
   now <- liftIO getCurrentTime
   parseISO tz $ show $ utctDay now
-parseTimeInput tz i = parseISO tz i
+parseTimeInput tz i = do
+  now <- liftIO getCurrentTime
+  let localNow = utcToZonedTime tz now
+  zonedTimeToUTC <$> parseDateTimeWithDefault localNow i
 
 utcToISO :: UTCTime -> String
-utcToISO t = let tc = defaultTimeLocale
-             in formatTime tc "%F %T" t
+utcToISO t =
+  let tc = defaultTimeLocale
+  in  formatTime tc "%F %T" t
 
 -- guess I did this for fun?
 split :: String -> Char -> [String]
