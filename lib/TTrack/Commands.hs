@@ -69,10 +69,17 @@ start name mbegin = do
 
 current :: TrackerMonad Task
 current = do
-  last <- getLastSession
+  last <- getLastUnendedSession
   if isEnded last
     then throwError $ NoTaskFound $ "No current task could be found"
     else return $ sessTask last
+
+cancel :: TrackerMonad ()
+cancel = do
+  last <- getLastUnendedSession
+  if isEnded last
+    then throwError $ NoTaskFound $ "No current task could be found"
+    else removeSessionById (sessId last) >> pure ()
 
 stop :: TrackerMonad Session
 stop = do
@@ -119,6 +126,11 @@ report n = do
   sessions <- getTaskSessions task
   tz <- getTTTimeZone
   mapM_ (\x -> tell [showSess x tz]) sessions
+
+purge :: String -> TrackerMonad ()
+purge n = do
+  task <- getTaskByName n
+  purgeSessionsOfTaskId (taskId task)
 
 list :: TrackerMonad [Task]
 list = do

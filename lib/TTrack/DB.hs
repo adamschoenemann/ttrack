@@ -191,12 +191,28 @@ getLastSession = do
   r <- liftIO
     $ quickQuery'
       dbh
-      "SELECT * FROM sessions ORDER BY datetime(start) DESC LIMIT 1"
+      "SELECT * FROM sessions ORDER BY datetime(start) DESC, id DESC LIMIT 1"
       []
   case r of
     [] -> throwError
       $ NoLastSession
       $ "Error in getLastSession: No sessions found"
+    [row @ [id, tid, start, end]] -> do
+      task <- getTaskById (fromSql tid)
+      return $ sessFromSql row task
+
+getLastUnendedSession :: TrackerMonad Session
+getLastUnendedSession = do
+  dbh <- ask
+  r <- liftIO
+    $ quickQuery'
+      dbh
+      "SELECT * FROM sessions WHERE end is null ORDER BY datetime(start) DESC, id DESC LIMIT 1;"
+      []
+  case r of
+    [] -> throwError
+      $ NoLastSession
+      $ "Error in getLastUndendSession: No sessions found"
     [row @ [id, tid, start, end]] -> do
       task <- getTaskById (fromSql tid)
       return $ sessFromSql row task
@@ -215,6 +231,17 @@ removeTask n = do
   dbh <- ask
   liftIO $ run dbh "DELETE FROM tasks WHERE id=?" [toSql $ taskId task]
   return task
+
+removeSessionById :: Integer -> TrackerMonad Integer
+removeSessionById id = do
+  dbh <- ask
+  liftIO $ run dbh "DELETE FROM sessions WHERE id=?" [toSql $ id]
+
+purgeSessionsOfTaskId :: Integer -> TrackerMonad ()
+purgeSessionsOfTaskId taskId = do
+  dbh <- ask
+  liftIO $ run dbh "DELETE FROM sessions WHERE taskId=? AND end IS NULL" [toSql $ taskId]
+  pure ()
 
 getTaskSessions :: Task -> TrackerMonad [Session]
 getTaskSessions task = do
