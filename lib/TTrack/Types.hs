@@ -17,7 +17,7 @@ import           Database.HDBC.Sqlite3
 
 import           System.Time.Utils (renderSecs)
 
-import           TTrack.TimeUtils (readSeconds)
+import           TTrack.TimeUtils (readSeconds, readHoursRoundQuarters)
 
 data Task =
   Task { taskId :: Integer, taskName :: String }
@@ -80,6 +80,8 @@ showSess s tz = (showStart s)
   ++ (showEnd s)
   ++ " | "
   ++ (maybe "in progress" (readSeconds . round) $ sessDuration s)
+  ++ " | "
+  ++ (maybe "in progress" (show . readHoursRoundQuarters . round) $ sessDuration s)
   where
     format = "%FT%T%z"
 

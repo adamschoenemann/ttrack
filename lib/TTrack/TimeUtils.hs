@@ -1,7 +1,8 @@
 module TTrack.TimeUtils
   ( parseDurationToDiffTime
   , parseDurationToSeconds
-  , readSeconds) where
+  , readSeconds
+  , readHoursRoundQuarters) where
 
 import           Control.Applicative hiding (many)
 
@@ -68,14 +69,27 @@ hours a = a `divRemaind` (60 * 60)
 minutes :: Integer -> (Integer, Integer)
 minutes a = a `divRemaind` 60
 
-readSeconds :: Integer -> String
-readSeconds s
-  | s < 0 = error "readSeconds does not take negative values"
+readSecondsToTod :: Integer -> (Integer, Integer, Integer)
+readSecondsToTod s
+  | s < 0 = error "readSecondsToTod does not take negative values"
   | otherwise =
     let (h, s') = hours s
         (m, s'') = minutes s'
-        format x c =
-          if x > 0
-          then show x ++ [c]
-          else ""
-    in concatMap (uncurry format) $ zip [h, m, s''] "hms"
+    in (h, m, s'')
+
+readSeconds :: Integer -> String
+readSeconds s =
+  let (h, m, s') = readSecondsToTod s
+      format x c =
+        if x > 0
+        then show x ++ [c]
+        else ""
+  in concatMap (uncurry format) $ zip [h, m, s'] "hms"
+
+readHoursRoundQuarters :: Integer -> Double
+readHoursRoundQuarters s =
+  fromIntegral h + (fromIntegral minutesAsQuarters / 4)
+  where
+    (h, m, s') = readSecondsToTod s
+    secondsAsMinutes = round (fromIntegral s' / 60)
+    minutesAsQuarters = round (fromIntegral (m + secondsAsMinutes) / 15)
