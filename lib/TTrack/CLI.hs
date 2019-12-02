@@ -1,10 +1,43 @@
+{-# LANGUAGE TypeApplications #-}
+
 module TTrack.CLI where
 
+import           Data.Functor (($>))
 import           Data.Maybe.Extras (fromJustMsg)
+import           Data.Semigroup
+
+import           Database.HDBC
+import           Database.HDBC.Sqlite3
+
+import           Options.Applicative
 
 import           TTrack.Commands
 import           TTrack.TimeUtils
 import           TTrack.Types
+
+strarg = argument str idm
+
+idminfo p = info p idm
+
+-- TODO: Clean this up, impl rest of commands,
+cli = subparser $ createCmd <> startCmd
+  where
+    createCmd = command "create" (idminfo ((\n -> create n $> ()) <$> strarg))
+
+    startCmd = command
+      "start"
+      (idminfo ((\n b -> start n b $> ()) <$> strarg <*> optional strarg))
+
+myMain :: Connection -> IO ()
+myMain dbh = do
+  m <- execParser (info cli idm)
+  r <- runTrackerMonad m dbh
+  case r    -- TODO: this is copied from Main
+     of
+      Left err -> do
+        putStrLn $ unwrapTTError err
+        rollback dbh
+      Right (v, msg) -> mapM_ putStrLn msg
 
 handleInput :: [String] -> TrackerMonad ()
 handleInput args = case args of
