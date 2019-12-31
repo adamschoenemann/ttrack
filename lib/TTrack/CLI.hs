@@ -19,14 +19,45 @@ strarg = argument str idm
 
 idminfo p = info p idm
 
+unitA :: Applicative m => (a -> m b) -> a -> m ()
+unitA f x = f x $> ()
+
 -- TODO: Clean this up, impl rest of commands,
-cli = subparser $ createCmd <> startCmd
+cli = subparser
+  $ mconcat
+    [ createCmd
+    , startCmd
+    , purgeCmd
+    , cancelCmd
+    , currentCmd
+    , stopCmd
+    , listCmd
+    , durationCmd
+    , reportCmd
+    , removeCmd
+    ]
   where
-    createCmd = command "create" (idminfo ((\n -> create n $> ()) <$> strarg))
+    createCmd = command "create" (idminfo ((unitA create) <$> strarg))
 
     startCmd = command
       "start"
       (idminfo ((\n b -> start n b $> ()) <$> strarg <*> optional strarg))
+
+    cancelCmd = command "cancel" (idminfo (pure $ cancel $> ()))
+
+    purgeCmd = command "purge" (idminfo (unitA purge <$> strarg))
+
+    currentCmd = command "current" (idminfo (pure $ current $> ()))
+
+    stopCmd = command "stop" (idminfo (pure $ stop $> ()))
+
+    listCmd = command "list" (idminfo (pure $ list $> ()))
+
+    durationCmd = command "duration" (idminfo (pure $ duration $> ()))
+
+    reportCmd = command "report" (idminfo (unitA report <$> strarg))
+
+    removeCmd = command "remove" (idminfo (unitA remove <$> strarg))
 
 myMain :: Connection -> IO ()
 myMain dbh = do
