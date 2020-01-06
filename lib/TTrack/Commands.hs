@@ -1,25 +1,27 @@
 module TTrack.Commands where
 
+import           Control.Monad.Except
+
+import           Data.Char (toLower, toUpper)
+import           Data.Maybe.Extras (fromJustMsg)
+import           Data.Time
+
+import           System.Directory (doesFileExist, removeFile)
+
+import           TTrack.Config
 import           TTrack.DB
+import           TTrack.TimeUtils
 import           TTrack.Types
 import           TTrack.Utils
-import           TTrack.TimeUtils
-import           TTrack.Config
-import           System.Directory (doesFileExist, removeFile)
-import           Control.Monad.Except
-import           Data.Time
-import           Data.Maybe.Extras (fromJustMsg)
-import           Data.Char (toUpper, toLower)
 
 create :: String -> TrackerMonad Task
 create name = do
   last <- getLastSession
   if isEnded last
     then createNew
-    else
-      throwError
-        $ OtherSessionStarted
-        $ "A session is already in progress. Please close it \
+    else throwError
+      $ OtherSessionStarted
+      $ "A session is already in progress. Please close it \
                 \before creating a new task."
   `catchError` errorHandler
   where
@@ -43,7 +45,7 @@ start name mbegin = do
       ++ " is already open. Please close it first"
     else startSession' tz t mbegin `catchError` errorHandler tz
   where
-    errorHandler _  (NoTaskFound msg) = createNew
+    errorHandler _ (NoTaskFound msg) = createNew
     errorHandler tz (NoLastSession msg) = do
       t <- getTaskByName name
       startSession' tz t mbegin
@@ -71,8 +73,10 @@ current :: TrackerMonad Task
 current = do
   last <- getLastUnendedSession
   if isEnded last
-    then throwError $ NoTaskFound $ "No current task could be found"
-    else return $ sessTask last
+    then throwError $ NoTaskFound "No current task could be found"
+    else do
+      tell ["Current task is " ++ taskName (sessTask last)]
+      pure $ sessTask last
 
 cancel :: TrackerMonad ()
 cancel = do
@@ -110,8 +114,7 @@ stop = do
       durString <- liftIO getLine
       let durDiffTime = parseDurationToDiffTime durString
       case durDiffTime of
-        Just d  ->
-          setSessDuration sess d
+        Just d -> setSessDuration sess d
         Nothing -> do
           liftIO
             $ putStrLn
@@ -154,7 +157,10 @@ timeInInterval name from to = do
   tos <- parseTimeInput tz to
   t <- getTaskByName name
   ss <- getTaskSessionsInInterval t froms tos
-  let time = sum $ map (toInteger . round . fromJustMsg "timeInInterval" . sessDuration) ss
+  let time = sum
+        $ map
+          (toInteger . round . fromJustMsg "timeInInterval" . sessDuration)
+          ss
   return (fromInteger time :: NominalDiffTime)
 
 time :: String -> TrackerMonad NominalDiffTime
@@ -172,7 +178,11 @@ duration = do
   sess <- getLastSession
   if isEnded sess
     then throwError $ NoCurrentSession "No session is currently in progress"
-    else liftIO $ sessDurationIO sess
+    else do
+      dur <- liftIO $ sessDurationIO sess
+      task <- current
+      tell ["Session duration: " ++ readSeconds (round dur)]
+      pure dur
 
 reset = do
   f <- doesFileExist dbname

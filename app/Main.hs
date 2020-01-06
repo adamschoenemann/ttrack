@@ -1,4 +1,3 @@
-{-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
 module Main where
@@ -31,13 +30,14 @@ runCommand dbh =
   withTransaction dbh doSql
   where
     doSql dbh = do
-      args <- getArgs
-      r <- runTrackerMonad (handleInput args) dbh
-      case r of
-        Left err -> do
-          putStrLn $ unwrapTTError err
-          rollback dbh
-        Right (v, msg) -> mapM_ putStrLn msg
+      m <- parseCli
+      r <- runTrackerMonad m dbh
+      case r
+        of
+          Left err -> do
+            putStrLn $ unwrapTTError err
+            rollback dbh
+          Right (v, msg) -> mapM_ putStrLn msg
 
 acquire :: IO Connection
 acquire = do

@@ -1,8 +1,7 @@
-{-# LANGUAGE TypeApplications #-}
-
 module TTrack.CLI where
 
 import           Data.Functor (($>))
+import           Data.Maybe (fromMaybe)
 import           Data.Maybe.Extras (fromJustMsg)
 import           Data.Semigroup
 
@@ -15,15 +14,16 @@ import           TTrack.Commands
 import           TTrack.TimeUtils
 import           TTrack.Types
 
+strarg :: Parser String
 strarg = argument str idm
 
+idminfo :: Parser a -> ParserInfo a
 idminfo p = info p idm
 
 unitA :: Applicative m => (a -> m b) -> a -> m ()
 unitA f x = f x $> ()
 
--- TODO: Clean this up, impl rest of commands,
-cli = subparser
+cli = hsubparser
   $ mconcat
     [ createCmd
     , startCmd
@@ -35,115 +35,61 @@ cli = subparser
     , durationCmd
     , reportCmd
     , removeCmd
+    , timeCmd
     ]
   where
-    createCmd = command "create" (idminfo ((unitA create) <$> strarg))
+    createCmd = cmd "create" "Create a new task" (unitA create <$> strarg)
 
-    startCmd = command
+    startCmd = cmd
       "start"
-      (idminfo ((\n b -> start n b $> ()) <$> strarg <*> optional strarg))
+      "Start tracking a task"
+      ((\n b -> start n b $> ()) <$> strarg <*> optional strarg)
 
-    cancelCmd = command "cancel" (idminfo (pure $ cancel $> ()))
+    cancelCmd =
+      cmd "cancel" "Cancel the current task, if any" (pure $ cancel $> ())
 
-    purgeCmd = command "purge" (idminfo (unitA purge <$> strarg))
+    purgeCmd = cmd
+      "purge"
+      "Delete all undended sessions for the given task"
+      (unitA purge <$> strarg)
 
-    currentCmd = command "current" (idminfo (pure $ current $> ()))
+    currentCmd =
+      cmd "current" "Get the current task in progress" (pure $ current $> ())
 
-    stopCmd = command "stop" (idminfo (pure $ stop $> ()))
+    stopCmd = cmd "stop" "Stop tracking the current task" (pure $ stop $> ())
 
-    listCmd = command "list" (idminfo (pure $ list $> ()))
+    listCmd = cmd "list" "List all tasks" (pure $ list $> ())
 
-    durationCmd = command "duration" (idminfo (pure $ duration $> ()))
+    durationCmd = cmd
+      "duration"
+      "Print duration of the current session"
+      (pure $ duration $> ())
 
-    reportCmd = command "report" (idminfo (unitA report <$> strarg))
+    reportCmd = cmd
+      "report"
+      "Print a list of sessions for a task"
+      (unitA report <$> strarg)
 
-    removeCmd = command "remove" (idminfo (unitA remove <$> strarg))
+    removeCmd = cmd
+      "remove"
+      "Remove a task and all its sessions"
+      (unitA remove <$> strarg)
 
-myMain :: Connection -> IO ()
-myMain dbh = do
-  m <- execParser (info cli idm)
-  r <- runTrackerMonad m dbh
-  case r    -- TODO: this is copied from Main
-     of
-      Left err -> do
-        putStrLn $ unwrapTTError err
-        rollback dbh
-      Right (v, msg) -> mapM_ putStrLn msg
+    timeCmd = cmd
+      "time"
+      "Print time spent on a task"
+      (performTimeCmd <$> strarg <*> timeOpt "from" 'f' <*> timeOpt "to" 't')
 
-handleInput :: [String] -> TrackerMonad ()
-handleInput args = case args of
-  ["create", n] -> do
-    create n
-    return ()
-  ["start", n] -> do
-    start n Nothing
-    return ()
-  ["start", n, b] -> do
-    start n (Just b)
-    return ()
-  ["cancel"] -> do
-    cancel
-    return ()
-  ["purge", n] -> do
-    purge n
-    return ()
-  ["current"] -> do
-    task <- current
-    tell ["Current task is " ++ taskName task]
-    return ()
-  ["stop"] -> do
-    sess <- stop
-    tell
-      [ "Session duration was "
-          ++ (readSeconds . round . fromJustMsg "sessDuration sess"
-              $ sessDuration sess)
-      ]
-    return ()
-  ["list"] -> do
-    list
-    return ()
-  ["duration"] -> do
-    d <- duration
-    task <- current
-    tell
-      [ "Current session is with task: "
-          ++ taskName task
-          ++ ". Session duration: "
-          ++ (readSeconds $ round d)
-      ]
-    return ()
-  ["report", n] -> report n
-  ["remove", n] -> do
-    remove n
-    return ()
-  ["time", n] -> do
-    t <- time n
-    tell $ ["Time spent on task " ++ n ++ " is " ++ (readSeconds $ round t)]
-    return ()
-  ["time", n, from, to] -> do
-    time <- timeInInterval n from to
-    tell ["Time spent on task: " ++ n ++ ": " ++ readSeconds (round time)]
-    return ()
-  _ -> tell [syntaxError] >> pure ()
+    timeOpt lname sname = optional
+      $ strOption (long lname <> short sname <> metavar "DATE")
+      :: Parser (Maybe String)
 
-syntaxError :: String
-syntaxError = "Usage: ttrack command\n\
-              \\n\
-              \commands:\n\
-              \\tcreate {task}\t\t\t creates a new task\n\
-              \\tstart {task} [begin] \t\t starts tracking task from now or [begin : Date]\n\
-              \\tstop \t\t\t\t stops tracking current task\n\
-              \\tcurrent \t\t\t get current task in progress\n\
-              \\tduration \t\t\t print duration of current session\n\
-              \\treport {task} \t\t\t print a list of sessions for the task\n\
-              \\tlist \t\t\t\t lists all tasks\n\
-              \\ttime {task} [from to] \t\t print time spent on task \n\
-              \\tremove {task} \t\t\t removes task and all sessions for that task\n\
-              \\tcancel \t\t\t\t cancels the current task, if any\n\
-              \\tpurge {task} \t\t\t deletes all unended sessions for the given task\n\
-              \formats:\n\
-              \\tDates are parsed as ISO formatted date strings.\n\
-              \\tYou can leave out date prefixes and timezones are optional, e.g\n\
-              \\thh:mm is the minimal date to give, which will default to today's date\n\
-              \\tand 0 seconds in your OS' timezone."
+    performTimeCmd n mfrom mto = do
+      t <- fromMaybe (time n) (liftA2 (timeInInterval n) mfrom mto)
+      tell ["Time spent on task: " ++ n ++ ": " ++ readSeconds (round t)]
+      pure ()
 
+    cmd c desc p = command c (info p (progDesc desc))
+
+parseCli = execParser
+  (info (cli <**> helper) (footer "Give COMMAND --help for more info"))
