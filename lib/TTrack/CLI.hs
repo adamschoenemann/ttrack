@@ -3,7 +3,8 @@ module TTrack.CLI where
 import           Data.Functor (($>))
 import           Data.Maybe (fromMaybe)
 import           Data.Maybe.Extras (fromJustMsg)
-import           Data.Semigroup
+import           Data.Semigroup hiding (option)
+import           Control.Applicative
 
 import           Database.HDBC
 import           Database.HDBC.Sqlite3
@@ -68,7 +69,7 @@ cli = hsubparser
     reportCmd = cmd
       "report"
       "Print a list of sessions for a task"
-      (unitA report <$> strarg)
+      (report <$> strarg <*> groupOpt)
 
     removeCmd = cmd
       "remove"
@@ -83,6 +84,11 @@ cli = hsubparser
     timeOpt lname sname = optional
       $ strOption (long lname <> short sname <> metavar "DATE")
       :: Parser (Maybe String)
+
+    groupOpt =
+      let opt = option auto (long "group-by" <> short 'g')
+      in (fromMaybe NoGroup) <$> optional opt
+
 
     performTimeCmd n mfrom mto = do
       t <- fromMaybe (time n) (liftA2 (timeInInterval n) mfrom mto)

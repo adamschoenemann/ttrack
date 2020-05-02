@@ -123,8 +123,8 @@ stop = do
 
     tellUsr = liftIO . putStrLn
 
-report :: String -> TrackerMonad ()
-report n = do
+report :: String -> GroupBy -> TrackerMonad ()
+report n groupBy = do
   task <- getTaskByName n
   sessions <- getTaskSessions task
   tz <- getTTTimeZone

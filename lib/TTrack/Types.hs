@@ -42,6 +42,16 @@ data TTError
   | OtherError String
   deriving (Show, Eq)
 
+data GroupBy = DayGroup | NoGroup deriving (Eq)
+
+instance Show GroupBy where
+  show DayGroup = "day"
+  show NoGroup = "none"
+
+instance Read GroupBy where
+  readsPrec _ "day" = [(DayGroup, "")]
+  readsPrec _ "none" = [(NoGroup, "")]
+
 -- Make Either ErrorT a an instance of monoid for concatenation.
 -- WITH short-circuiting
 instance (Monoid a) => Monoid (Either e a) where
