@@ -1,4 +1,5 @@
 {-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE PatternGuards #-}
 
 module Main where
 
@@ -14,6 +15,7 @@ import           Prelude hiding (catch, handle)
 
 import           System.Directory
 import           System.Environment
+import           System.Exit
 import           System.FilePath
 
 import           TTrack.CLI
@@ -26,18 +28,16 @@ main =
   withSocketsDo $ handle errorHandler $ bracket acquire finalize runCommand
 
 runCommand :: Connection -> IO ()
-runCommand dbh =
-  withTransaction dbh doSql
+runCommand dbh = withTransaction dbh doSql
   where
     doSql dbh = do
       m <- parseCli
       r <- runTrackerMonad m dbh
-      case r
-        of
-          Left err -> do
-            putStrLn $ unwrapTTError err
-            rollback dbh
-          Right (v, msg) -> mapM_ putStrLn msg
+      case r of
+        Left err -> do
+          putStrLn $ unwrapTTError err
+          rollback dbh
+        Right (v, msg) -> mapM_ putStrLn msg
 
 acquire :: IO Connection
 acquire = do
@@ -50,7 +50,12 @@ finalize :: Connection -> IO ()
 finalize = disconnect
 
 errorHandler :: SomeException -> IO ()
-errorHandler e = putStrLn $ "An error occured: " ++ show e
+errorHandler e
+  | Just e' <- fromException e :: Maybe ExitCode =
+    case e' of
+      ExitSuccess -> pure ()
+      ExitFailure code -> exitFailure
+  | otherwise = putStrLn $ "An error occurred: " ++ show e
 
 getDir :: IO String
 getDir = do
