@@ -70,9 +70,3 @@ getDir = do
         ++ defaultDir
       return defaultDir
     Just dir -> return dir
---showDB = do
---    dbh <- connect dbname
---    tasks <- quickQuery' dbh "SELECT * FROM tasks" []
---    sessions <- quickQuery' dbh "SELECT * FROM sessions" []
---    putStrLn $ show tasks
---    putStrLn $ show sessions
