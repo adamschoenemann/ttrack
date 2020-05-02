@@ -16,6 +16,7 @@ library:
   - parsec
   - mtl
   - microlens-platform
+  - optparse-applicative
 executables:
   ttrack:
     main: Main.hs
@@ -28,6 +29,7 @@ executables:
     - filepath
     - network
     - directory
+    - optparse-applicative
 tests:
   test-ttrack:
     main: Spec.hs
