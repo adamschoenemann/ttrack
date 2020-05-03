@@ -41,3 +41,4 @@ tests:
     - QuickCheck
     - time
     - mtl
+    - microlens-platform

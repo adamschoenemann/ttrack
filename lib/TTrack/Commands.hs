@@ -1,9 +1,14 @@
+{-# LANGUAGE RankNTypes #-}
 module TTrack.Commands where
 
 import           Control.Monad.Except
 
 import           Data.Char (toLower, toUpper)
+import           Data.List (groupBy, sort)
+import           Data.List.Extras (safeHead)
+import           Data.Maybe (fromMaybe)
 import           Data.Maybe.Extras (fromJustMsg)
+import           Data.Ord (Down(..))
 import           Data.Time
 
 import           System.Directory (doesFileExist, removeFile)
@@ -123,12 +128,43 @@ stop = do
 
     tellUsr = liftIO . putStrLn
 
+instance Semigroup NominalDiffTime where
+  n1 <> n2 = n1 + n2
+
+instance Monoid NominalDiffTime where
+  mempty = 0
+
+unDown :: Down a -> a
+unDown (Down x) = x
+
+mergeSessions :: UTCTime -> [Session] -> (UTCTime, UTCTime, NominalDiffTime)
+mergeSessions now ss =
+  let dur = mconcat $ map (sessDurationWithNow now) ss
+      start = fromMaybe now . safeHead . sort . map sessStart $ ss
+      end = maybe now unDown
+        . safeHead
+        . sort
+        . map (Down . fromMaybe now . sessEnd)
+        $ ss
+  in (start, end, dur)
+
+tmap23 :: (forall x. x -> f x) -> (a, b, c) -> (a, f b, f c)
+tmap23 f (x, y, z) = (x, f y, f z)
+
 report :: String -> GroupBy -> TrackerMonad ()
-report n groupBy = do
+report n groupByOpt = do
   task <- getTaskByName n
   sessions <- getTaskSessions task
   tz <- getTTTimeZone
-  mapM_ (\x -> tell [showSess x tz]) sessions
+  now <- getTTCurrentTime
+  let groupIfGiven = case groupByOpt of
+        NoGroup -> map sessToSessTime
+        DayGroup -> \ss
+          -> let grouped = groupBy
+                   (\x y -> utctDay (sessStart x) == utctDay (sessStart y))
+                   ss
+             in map (tmap23 Just . mergeSessions now) grouped
+  mapM_ (\x -> tell [showStartEndDur x tz]) $ groupIfGiven sessions
 
 purge :: String -> TrackerMonad ()
 purge n = do

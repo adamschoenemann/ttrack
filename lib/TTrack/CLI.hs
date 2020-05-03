@@ -1,10 +1,11 @@
 module TTrack.CLI where
 
+import           Control.Applicative
+
 import           Data.Functor (($>))
 import           Data.Maybe (fromMaybe)
 import           Data.Maybe.Extras (fromJustMsg)
 import           Data.Semigroup hiding (option)
-import           Control.Applicative
 
 import           Database.HDBC
 import           Database.HDBC.Sqlite3
@@ -86,9 +87,8 @@ cli = hsubparser
       :: Parser (Maybe String)
 
     groupOpt =
-      let opt = option auto (long "group-by" <> short 'g')
-      in (fromMaybe NoGroup) <$> optional opt
-
+      let opt = option auto (long "group-by" <> short 'g' <> value DayGroup)
+      in fromMaybe NoGroup <$> optional opt
 
     performTimeCmd n mfrom mto = do
       t <- fromMaybe (time n) (liftA2 (timeInInterval n) mfrom mto)

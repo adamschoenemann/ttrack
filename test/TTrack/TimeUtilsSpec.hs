@@ -20,7 +20,8 @@ spec = do
         readSeconds s `shouldBe` "1s"
         readSeconds (2*h + 34*m + 48*s) `shouldBe` "2h34m48s"
       it "causes an error if supplied with a negative number" $
-        evaluate (readSeconds (-1)) `shouldThrow` errorCall "readSeconds does not take negative values"
+        evaluate (readSeconds (-1)) `shouldThrow`
+          errorCall "readSecondsToTod does not take negative values"
     describe "parseDurationToSeconds" $
       it "parses a duration string and returns the seconds" $ do
         parseDurationToSeconds "1h" `shouldBe` Just h
