@@ -17,6 +17,7 @@ library:
   - mtl
   - microlens-platform
   - optparse-applicative
+  - containers
 executables:
   ttrack:
     main: Main.hs
@@ -42,3 +43,4 @@ tests:
     - time
     - mtl
     - microlens-platform
+    - containers
