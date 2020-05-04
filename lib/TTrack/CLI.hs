@@ -87,7 +87,7 @@ cli = hsubparser
       :: Parser (Maybe String)
 
     groupOpt =
-      let opt = option auto (long "group-by" <> short 'g' <> value DayGroup)
+      let opt = option auto (long "group-by" <> short 'g')
       in fromMaybe NoGroup <$> optional opt
 
     performTimeCmd n mfrom mto = do
