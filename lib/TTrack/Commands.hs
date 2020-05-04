@@ -1,4 +1,5 @@
 {-# LANGUAGE RankNTypes #-}
+
 module TTrack.Commands where
 
 import           Control.Monad.Except
@@ -6,6 +7,7 @@ import           Control.Monad.Except
 import           Data.Char (toLower, toUpper)
 import           Data.List (groupBy, sort)
 import           Data.List.Extras (safeHead)
+import qualified Data.Map as M
 import           Data.Maybe (fromMaybe)
 import           Data.Maybe.Extras (fromJustMsg)
 import           Data.Ord (Down(..))
@@ -15,6 +17,7 @@ import           System.Directory (doesFileExist, removeFile)
 
 import           TTrack.Config
 import           TTrack.DB
+import           TTrack.PrintTable (printTable)
 import           TTrack.TimeUtils
 import           TTrack.Types
 import           TTrack.Utils
@@ -151,6 +154,38 @@ mergeSessions now ss =
 tmap23 :: (forall x. x -> f x) -> (a, b, c) -> (a, f b, f c)
 tmap23 f (x, y, z) = (x, f y, f z)
 
+data ReportHeader
+  = Start
+  | End
+  | Duration
+  | Hours
+  deriving (Eq, Ord, Show)
+
+reportTable :: TimeZone -> [SessTime] -> String
+reportTable tz = printTable " | " . foldr go initialMap
+  where
+    go st @ (_, _, dur) acc = foldr
+      (\(k, v) -> M.insertWith (++) k [v])
+      acc
+      [ (Start, showStart st)
+      , (End, showEnd st)
+      , (Duration, maybe "in progress" (readSeconds . round) dur)
+      , ( Hours
+        , maybe "in progress" (show . readHoursRoundQuarters . round) dur)
+      ]
+
+    initialMap = M.empty :: M.Map ReportHeader [String]
+
+    format = "%FT%T%z"
+
+    dtl = defaultTimeLocale
+
+    showEnd (_, end, _) = case end of
+      Nothing -> "Unended                 "
+      Just end' -> formatTime dtl format $ utcToZonedTime tz end'
+
+    showStart (start, _, _) = formatTime dtl format $ utcToZonedTime tz $ start
+
 report :: String -> GroupBy -> TrackerMonad ()
 report n groupByOpt = do
   task <- getTaskByName n
@@ -164,7 +199,7 @@ report n groupByOpt = do
                    (\x y -> utctDay (sessStart x) == utctDay (sessStart y))
                    ss
              in map (tmap23 Just . mergeSessions now) grouped
-  mapM_ (\x -> tell [showStartEndDur x tz]) $ groupIfGiven sessions
+  tell [reportTable tz $ groupIfGiven sessions]
 
 purge :: String -> TrackerMonad ()
 purge n = do

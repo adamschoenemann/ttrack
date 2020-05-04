@@ -98,30 +98,8 @@ sessDuration sess = case end of
 
 type SessTime = (UTCTime, Maybe UTCTime, Maybe NominalDiffTime)
 
-showStartEndDur :: SessTime -> TimeZone -> String
-showStartEndDur (start, end, dur) tz = showStart
-  ++ " | "
-  ++ showEnd
-  ++ " | "
-  ++ (maybe "in progress" (readSeconds . round) $ dur)
-  ++ " | "
-  ++ (maybe "in progress" (show . readHoursRoundQuarters . round) $ dur)
-  where
-    format = "%FT%T%z"
-
-    dtl = defaultTimeLocale
-
-    showEnd = case end of
-      Nothing -> "Unended                 "
-      Just end' -> formatTime dtl format $ utcToZonedTime tz end'
-
-    showStart = formatTime dtl format $ utcToZonedTime tz $ start
-
 sessToSessTime :: Session -> SessTime
 sessToSessTime s = (sessStart s, sessEnd s, sessDuration s)
-
-showSess :: Session -> TimeZone -> String
-showSess = showStartEndDur . sessToSessTime
 
 sessStartZoned :: Session -> TimeZone -> ZonedTime
 sessStartZoned s tz = utcToZonedTime tz $ sessStart s
