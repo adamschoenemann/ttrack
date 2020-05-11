@@ -5,6 +5,7 @@ module TTrack.Commands where
 import           Control.Monad.Except
 
 import           Data.Char (toLower, toUpper)
+import           Data.Function (on)
 import           Data.List (groupBy, sort)
 import           Data.List.Extras (safeHead)
 import qualified Data.Map as M
@@ -23,13 +24,14 @@ import           TTrack.Types
 import           TTrack.Utils
 
 create :: String -> TrackerMonad Task
-create name = do
-  last <- getLastSession
-  if isEnded last
-    then createNew
-    else throwError
-      $ OtherSessionStarted
-      $ "A session is already in progress. Please close it \
+create name =
+  do
+    last <- getLastSession
+    if isEnded last
+      then createNew
+      else throwError
+        $ OtherSessionStarted
+        $ "A session is already in progress. Please close it \
                 \before creating a new task."
   `catchError` errorHandler
   where
@@ -142,13 +144,12 @@ unDown (Down x) = x
 
 mergeSessions :: UTCTime -> [Session] -> (UTCTime, UTCTime, NominalDiffTime)
 mergeSessions now ss =
-  let dur = mconcat $ map (sessDurationWithNow now) ss
-      start = fromMaybe now . safeHead . sort . map sessStart $ ss
-      end = maybe now unDown
-        . safeHead
-        . sort
-        . map (Down . fromMaybe now . sessEnd)
-        $ ss
+  let
+    dur = mconcat $ map (sessDurationWithNow now) ss
+    start = fromMaybe now . safeHead . sort . map sessStart $ ss
+    end =
+      maybe now unDown . safeHead . sort . map (Down . fromMaybe now . sessEnd)
+      $ ss
   in (start, end, dur)
 
 tmap23 :: (forall x. x -> f x) -> (a, b, c) -> (a, f b, f c)
@@ -164,15 +165,16 @@ data ReportHeader
 reportTable :: TimeZone -> [SessTime] -> String
 reportTable tz = printTable " | " . foldr go initialMap
   where
-    go st@(_, _, dur) acc = foldr
-      (\(k, v) -> M.insertWith (++) k [v])
-      acc
-      [ (Start, showStart st)
-      , (End, showEnd st)
-      , (Duration, maybe "in progress" (readSeconds . round) dur)
-      , ( Hours
-        , maybe "in progress" (show . readHoursRoundQuarters . round) dur)
-      ]
+    go st@(_, _, dur) acc =
+      foldr
+        (\(k, v) -> M.insertWith (++) k [v])
+        acc
+        [ (Start, showStart st)
+        , (End, showEnd st)
+        , (Duration, maybe "in progress" (readSeconds . round) dur)
+        , ( Hours
+            , maybe "in progress" (show . readHoursRoundQuarters . round) dur)
+        ]
 
     initialMap = M.empty :: M.Map ReportHeader [String]
 
@@ -194,14 +196,15 @@ report n groupByOpt roundByOpt = do
   sessions <- getTaskSessions task
   tz <- getTTTimeZone
   now <- getTTCurrentTime
-  let groupIfGiven = case groupByOpt of
-        NoGroup -> map sessToSessTime
-        DayGroup -> \ss
-          -> let grouped = groupBy
-                   (\x y -> utctDay (sessStart x) == utctDay (sessStart y))
-                   ss
-             in map (tmap23 Just . mergeSessions now) grouped
-  tell [reportTable tz $ groupIfGiven sessions]
+  tell [reportTable tz $ groupIfGiven now sessions]
+  where
+    groupIfGiven now = case groupByOpt of
+      NoGroup -> map sessToSessTime
+      DayGroup -> map (tmap23 Just . mergeSessions now) . grouped
+      where
+        grouped = groupBy grouper
+
+        grouper = (==) `on` utctDay . sessStart
 
 purge :: String -> TrackerMonad ()
 purge n = do
@@ -230,7 +233,8 @@ timeInInterval name from to = do
   tos <- parseTimeInput tz to
   t <- getTaskByName name
   ss <- getTaskSessionsInInterval t froms tos
-  let time = sum
+  let time =
+        sum
         $ map
           (toInteger . round . fromJustMsg "timeInInterval" . sessDuration)
           ss

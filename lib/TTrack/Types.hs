@@ -80,8 +80,8 @@ instance (Monoid a) => Monoid (Either e a) where
 
   mappend (Left x) _ = Left x
   mappend _ (Left x) = Left x
-  mappend (Right a) (Right b) = Right
-    (a `mappend` b)
+  mappend (Right a) (Right b) =
+    Right (a `mappend` b)
 
 unwrapTTError :: TTError -> String
 unwrapTTError err@(NoTaskFound s) = s
@@ -168,5 +168,5 @@ getTTCurrentTime = liftIO getCurrentTime
 
 runTrackerMonad
   :: TrackerMonad a -> Connection -> IO (Either TTError (a, [String]))
-runTrackerMonad m conn = runExceptT
-  (runReaderT (runWriterT $ unTrackerMonad m) conn)
+runTrackerMonad m conn =
+  runExceptT (runReaderT (runWriterT $ unTrackerMonad m) conn)

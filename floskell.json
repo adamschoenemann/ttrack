@@ -38,6 +38,11 @@
         "force-linebreak": false,
         "spaces": "after",
         "linebreaks": "none"
+      },
+      "@ in pattern": {
+        "force-linebreak": false,
+        "spaces": "none",
+        "linebreaks": "after"
       }
     },
     "group": {
@@ -72,7 +77,7 @@
       "if": "vertical",
       "import-spec-list": "flex",
       "con-decls": "vertical",
-      "declaration": "flex",
+      "declaration": "try-oneline",
       "app": "try-oneline",
       "let": "vertical",
       "record": "try-oneline",
@@ -90,7 +95,7 @@
     "indent": {
       "deriving": 2,
       "if": "align",
-      "let-binds": "align",
+      "let-binds": "align-or-indent-by 2",
       "import-spec-list": "align",
       "onside": 2,
       "where": 2,
@@ -100,7 +105,7 @@
       "case": "indent-by 2",
       "let-in": "align",
       "where-binds": "indent-by 2",
-      "let": "align",
+      "let": "indent-by 0",
       "export-spec-list": "indent-by 2",
       "multi-if": "indent-by 2",
       "class": "indent-by 2"
@@ -121,12 +126,12 @@
     },
     "options": {
       "sort-pragmas": true,
-      "flexible-oneline": false,
+      "flexible-oneline": true,
       "decl-no-blank-lines": [],
       "split-language-pragmas": false,
       "align-sum-type-decl": true,
       "sort-import-lists": true,
-      "preserve-vertical-space": false,
+      "preserve-vertical-space": true,
       "sort-imports": true
     }
   },
