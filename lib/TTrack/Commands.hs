@@ -164,7 +164,7 @@ data ReportHeader
 reportTable :: TimeZone -> [SessTime] -> String
 reportTable tz = printTable " | " . foldr go initialMap
   where
-    go st @ (_, _, dur) acc = foldr
+    go st@(_, _, dur) acc = foldr
       (\(k, v) -> M.insertWith (++) k [v])
       acc
       [ (Start, showStart st)
@@ -181,13 +181,15 @@ reportTable tz = printTable " | " . foldr go initialMap
     dtl = defaultTimeLocale
 
     showEnd (_, end, _) = case end of
-      Nothing -> "Unended                 "
+      Nothing -> "Unended"
       Just end' -> formatTime dtl format $ utcToZonedTime tz end'
 
     showStart (start, _, _) = formatTime dtl format $ utcToZonedTime tz $ start
 
-report :: String -> GroupBy -> TrackerMonad ()
-report n groupByOpt = do
+report :: String -> GroupBy -> Maybe RoundBy -> TrackerMonad ()
+report n groupByOpt roundByOpt = do
+  liftIO $ print roundByOpt
+  -- TODO: use roundByOpt to do rounding
   task <- getTaskByName n
   sessions <- getTaskSessions task
   tz <- getTTTimeZone

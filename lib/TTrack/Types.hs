@@ -1,4 +1,5 @@
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
+{-# LANGUAGE TypeApplications #-}
 
 module TTrack.Types
   ( module TTrack.Types
@@ -11,7 +12,7 @@ import           Control.Monad.Reader
 import           Control.Monad.Trans
 import           Control.Monad.Writer
 
-import           Data.Maybe (fromMaybe)
+import           Data.Maybe (fromMaybe, isJust)
 import           Data.Maybe.Extras (fromJustMsg)
 import           Data.Monoid
 import           Data.Time
@@ -58,6 +59,20 @@ instance Read GroupBy where
   readsPrec _ "day" = [(DayGroup, "")]
   readsPrec _ "none" = [(NoGroup, "")]
 
+data RoundBy
+  = RoundByHours Int
+  | RoundByMinutes Int
+
+instance Show RoundBy where
+  show (RoundByHours h) = show h ++ "h"
+  show (RoundByMinutes m) = show m ++ "m"
+
+instance Read RoundBy where
+  readsPrec d input = case readsPrec @Int d input of
+    [(h, "h")] -> [(RoundByHours h, "")]
+    [(m, "m")] -> [(RoundByMinutes m, "")]
+    _ -> []
+
    -- Make Either ErrorT a an instance of monoid for concatenation.
    -- WITH short-circuiting
 instance (Monoid a) => Monoid (Either e a) where
@@ -69,16 +84,16 @@ instance (Monoid a) => Monoid (Either e a) where
     (a `mappend` b)
 
 unwrapTTError :: TTError -> String
-unwrapTTError err @ (NoTaskFound s) = s
-unwrapTTError err @ (NoSessionFound s _) = s
-unwrapTTError err @ (UnexpectedSqlResult s) = show err
-unwrapTTError err @ (TaskAlreadyExists s) = s
-unwrapTTError err @ (OtherSessionStarted s) = s
-unwrapTTError err @ (NoCurrentSession s) = s
-unwrapTTError err @ (OtherError s) = show err
+unwrapTTError err@(NoTaskFound s) = s
+unwrapTTError err@(NoSessionFound s _) = s
+unwrapTTError err@(UnexpectedSqlResult s) = show err
+unwrapTTError err@(TaskAlreadyExists s) = s
+unwrapTTError err@(OtherSessionStarted s) = s
+unwrapTTError err@(NoCurrentSession s) = s
+unwrapTTError err@(OtherError s) = show err
 
 isEnded :: Session -> Bool
-isEnded s = not $ (sessEnd s) == Nothing
+isEnded s = isJust (sessEnd s)
 
 sessDurationWithNow :: UTCTime -> Session -> NominalDiffTime
 sessDurationWithNow now sess = diffUTCTime endTime startTime

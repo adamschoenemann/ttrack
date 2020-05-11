@@ -70,7 +70,7 @@ cli = hsubparser
     reportCmd = cmd
       "report"
       "Print a list of sessions for a task"
-      (report <$> strarg <*> groupOpt)
+      (report <$> strarg <*> groupOpt <*> roundOpt)
 
     removeCmd = cmd
       "remove"
@@ -89,6 +89,11 @@ cli = hsubparser
     groupOpt =
       let opt = option auto (long "group-by" <> short 'g')
       in fromMaybe NoGroup <$> optional opt
+
+    roundOpt :: Parser (Maybe RoundBy)
+    roundOpt =
+      let opt = option auto (long "round-by" <> short 'r')
+      in  optional opt
 
     performTimeCmd n mfrom mto = do
       t <- fromMaybe (time n) (liftA2 (timeInInterval n) mfrom mto)
